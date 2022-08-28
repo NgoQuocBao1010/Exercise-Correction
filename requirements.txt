@@ -1,0 +1,12 @@
+opencv-python
+numpy
+dash
+tensorflow
+keras
+torch
+matplotlib
+seaborn
+pycm
+pandas
+plotly
+dash_dangerously_set_inner_html
