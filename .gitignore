@@ -1,5 +1,9 @@
+# Files
 .DS_Store
-Posture-main
-.ipynb_checkpoints
-env
-data
+
+# Folders
+Posture-main/
+.ipynb_checkpoints/
+env/
+data/
+.vscode/
