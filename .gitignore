@@ -2,8 +2,11 @@
 .DS_Store
 
 # Folders
-Posture-main/
 .ipynb_checkpoints/
 env/
 data/
 .vscode/
+
+# References
+Posture-main/
+ExercisePoseAnalysis-master/
