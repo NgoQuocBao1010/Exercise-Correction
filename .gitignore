@@ -8,5 +8,6 @@ data/
 .vscode/
 
 # References
-Posture-main/
-ExercisePoseAnalysis-master/
+biceps/
+plank/
+squat/
