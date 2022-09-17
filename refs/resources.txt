@@ -1,0 +1,2 @@
+https://learnopencv.com/building-a-body-posture-analysis-system-using-mediapipe/
+shift + command + 5
