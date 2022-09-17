@@ -1,12 +1,8 @@
 opencv-python
+mediapipe
 numpy
-dash
-tensorflow
-keras
-torch
-matplotlib
 seaborn
-pycm
-pandas
-plotly
-dash_dangerously_set_inner_html
+keras
+tensorflow
+matplotlib
+sklearn
