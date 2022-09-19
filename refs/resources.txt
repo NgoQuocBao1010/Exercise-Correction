@@ -1,2 +1,5 @@
 https://learnopencv.com/building-a-body-posture-analysis-system-using-mediapipe/
 shift + command + 5
+
+# PLANK true form corrections
+https://www.dreamstime.com/wrong-correct-plank-position-right-wrong-execution-technique-sport-exercise-common-mistakes-sport-wrong-correct-image142120275
