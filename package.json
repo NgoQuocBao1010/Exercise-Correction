@@ -1,0 +1,23 @@
+{
+    "name": "exercise-correction",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "install:client": "cd ./web/client && npm i",
+        "dev:client": "cd ./web/client && npm run dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NgoQuocBao1010/Exercise-Correction.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/NgoQuocBao1010/Exercise-Correction/issues"
+    },
+    "homepage": "https://github.com/NgoQuocBao1010/Exercise-Correction#readme",
+    "dependencies": {
+        "sass": "^1.55.0"
+    }
+}
