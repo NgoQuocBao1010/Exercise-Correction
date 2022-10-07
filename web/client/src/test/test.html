@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.1/control_utils.css" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="demo.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.1/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.1/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.2/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/pose.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <!-- BULMA NAVBAR -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="index.html">
+        <img src="https://camo.githubusercontent.com/82f2bfa2005e2755362d419da02d788b366506b0d55212c160abd5100f3a8822/68747470733a2f2f312e62702e626c6f6773706f742e636f6d2f2d7753746b30565a44664d6b2f59434330474952507244492f41414141414141414147632f31796a37494f556564766f654f3143754378713745544c57304671586e69366d77434c63424741735948512f733332302f6c6f676f746578742e706e67" >
+      </a>
+  
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="face.html">
+          Face
+        </a>
+  
+        <a class="navbar-item" href="faceMesh.html">
+          Face Mesh
+        </a>
+
+        <a class="navbar-item" href="hands.html">
+          Hands
+        </a>
+
+        <a class="navbar-item" href="pose.html">
+          Pose
+        </a>
+
+        <a class="navbar-item" href="holistic.html">
+          Holistic
+        </a>
+
+        </div>
+      </div>
+  
+    </div>
+  </nav>
+
+  <!-- CONTENTS --> 
+  <div class="container" style="margin-top: 20px;">
+
+    <div class="columns">
+      
+      <!-- WEBCAM INPUT -->
+      <div class="column">
+        <article class="panel is-info">
+          <p class="panel-heading">
+            Webcam Input
+          </p>
+          <div class="panel-block">
+            <video class="input_video5"></video>
+          </div>
+        </article>
+      </div>
+
+      <!-- MEDIAPIPE OUTPUT -->
+      <div class="column">
+        <article class="panel is-info">
+          <p class="panel-heading">
+            Mediapipe Pose Detection
+          </p>
+          <div class="panel-block">
+            <canvas class="output5" width="480px" height="480px"></canvas>
+          </div>
+        </article>
+      </div>
+    </div>
+    
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+    <div style="visibility: hidden;" class="control5">
+  </div>
+
+  <script type="text/javascript" src="./test.js"></script>
+</body>
+</html>

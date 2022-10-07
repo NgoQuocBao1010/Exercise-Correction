@@ -4,16 +4,13 @@ import Webcam from "./components/Webcam.vue";
 
 <template>
     <main>
-        <h1>Hello from Quoc Bao</h1>
-
-        <Webcam />
+        <RouterView />
     </main>
 </template>
 
 <style lang="scss">
 body {
     height: 100vh;
-    background-color: black;
 
     main {
         margin-inline: auto;
