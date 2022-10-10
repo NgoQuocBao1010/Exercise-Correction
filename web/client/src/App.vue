@@ -1,10 +1,12 @@
 <script setup>
-import Webcam from "./components/Webcam.vue";
+import APIcall from "./components/APIcall.vue";
 </script>
 
 <template>
     <main>
         <RouterView />
+
+        <APIcall />
     </main>
 </template>
 

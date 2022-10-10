@@ -11,6 +11,7 @@
     "@mediapipe/camera_utils": "^0.3.1640029074",
     "@mediapipe/drawing_utils": "^0.3.1620248257",
     "@mediapipe/pose": "^0.5.1635988162",
+    "axios": "^1.1.2",
     "pinia": "^2.0.21",
     "primeicons": "^6.0.1",
     "primevue": "^3.17.0",

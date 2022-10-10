@@ -9,3 +9,4 @@ numpy==1.23.3
 panda==1.4.3
 Django==4.1.2
 djangorestframework==3.14.0
+django-cors-headers==3.13.0
