@@ -9,7 +9,7 @@ const loadCamera = ref(false);
 const container = ref(null);
 const ctx = ref(null);
 const canvas = ref(null);
-const canvasWidth = ref(null);
+const canvasWidth = ref(500);
 const canvasHeight = ref(null);
 const video = ref(null);
 const camera = ref(null);
@@ -19,8 +19,7 @@ const onMediapipeResults = (results) => {
     const videoWidthHeightRatio =
         video.value.videoHeight / video.value.videoWidth;
 
-    canvasWidth.value = results.image.width;
-    canvasHeight.value = results.image.height;
+    canvasHeight.value = canvasWidth.value * videoWidthHeightRatio;
 
     ctx.value.save();
 
@@ -48,13 +47,13 @@ const onMediapipeResults = (results) => {
         // Draw Landmarks and Connectors
         drawConnectors(ctx.value, results.poseLandmarks, POSE_CONNECTIONS, {
             color: "#85929E",
-            lineWidth: 5,
+            lineWidth: 4,
             visibilityMin: 0.65,
         });
 
         drawLandmarks(ctx.value, results.poseLandmarks, {
             color: "#48C9B0",
-            lineWidth: 5,
+            lineWidth: 1,
             visibilityMin: 0.65,
         });
     } else {
@@ -93,6 +92,8 @@ const initMediapipe = () => {
                 console.log("LOADED WEBCAM");
             }
         },
+        width: 1280,
+        height: 1080,
     });
     camera.value.start();
 };
