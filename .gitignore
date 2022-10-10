@@ -3,6 +3,7 @@
 
 # Machine Learning Folders
 .ipynb_checkpoints/
+__pycache__/
 env/
 data/
 

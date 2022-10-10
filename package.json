@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "install:client": "cd ./web/client && npm i",
-        "dev:client": "cd ./web/client && npm run dev"
+        "dev:client": "cd ./web/client && npm run dev",
+        "dev:server": "cd ./web/server && python manage.py runserver"
     },
     "repository": {
         "type": "git",
