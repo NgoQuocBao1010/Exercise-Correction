@@ -3,7 +3,6 @@
 
 # Machine Learning Folders
 .ipynb_checkpoints/
-__pycache__/
 env/
 data/
 
@@ -17,7 +16,7 @@ data/
 *.sln
 *.sw?
 
-# Clients web
+# Vue clients
 package-lock.json
 logs
 *.log
@@ -35,6 +34,10 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
+
+# Django server
+__pycache__/
+db.sqlite3
 
 # References
 github/
