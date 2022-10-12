@@ -3,3 +3,7 @@ shift + command + 5
 
 # PLANK true form corrections
 https://www.dreamstime.com/wrong-correct-plank-position-right-wrong-execution-technique-sport-exercise-common-mistakes-sport-wrong-correct-image142120275
+
+http://bbpostures.free.fr/Human%20Posture%20Datasets2.htm
+
+https://www.analyticsvidhya.com/blog/2021/07/performing-multi-class-classification-on-fifa-dataset-using-keras/
