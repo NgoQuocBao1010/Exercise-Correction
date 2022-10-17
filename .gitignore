@@ -38,6 +38,7 @@ coverage
 # Django server
 __pycache__/
 db.sqlite3
+temp/
 
 # References
 github/
