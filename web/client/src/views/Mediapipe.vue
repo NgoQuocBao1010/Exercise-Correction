@@ -1,9 +1,10 @@
 <script setup>
+import { onMounted, ref } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
+
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { Pose, POSE_CONNECTIONS } from "@mediapipe/pose";
 import { Camera } from "@mediapipe/camera_utils";
-
-import { onMounted, ref } from "vue";
 
 const loadCamera = ref(false);
 const container = ref(null);
@@ -112,6 +113,10 @@ onMounted(() => {
     } catch (e) {
         console.log("ERROR INIT MEDIAPIPE");
     }
+});
+
+onBeforeRouteLeave(() => {
+    stopCamera();
 });
 </script>
 
