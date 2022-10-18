@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     # My Apps
     "api.apps.ApiConfig",
     "realtime.apps.RealtimeConfig",
+    "stream_video.apps.StreamVideoConfig",
 ]
 
 MIDDLEWARE = [
