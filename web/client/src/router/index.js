@@ -9,9 +9,14 @@ const router = createRouter({
             component: () => import("../views/Home.vue"),
         },
         {
-            path: "/",
+            path: "/mediapipe",
             name: "Mediapipe",
             component: () => import("../views/Mediapipe.vue"),
+        },
+        {
+            path: "/video",
+            name: "VideoStreaming",
+            component: () => import("../views/VideoStreaming.vue"),
         },
     ],
 });
