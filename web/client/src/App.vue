@@ -1,12 +1,14 @@
-<script setup>
-import APIcall from "./components/APIcall.vue";
-</script>
+<script setup></script>
 
 <template>
     <main>
-        <RouterView />
+        <ul>
+            <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
+            <RouterLink :to="{ name: 'Mediapipe' }">Mediapipe</RouterLink>
+        </ul>
 
-        <APIcall />
+        <!-- Page View -->
+        <RouterView />
     </main>
 </template>
 
@@ -17,11 +19,12 @@ body {
     main {
         margin-inline: auto;
         width: 80vw;
-    }
 
-    h1 {
-        color: white;
-        text-align: center;
+        ul {
+            margin-block: 2rem;
+            display: flex;
+            gap: 2rem;
+        }
     }
 }
 </style>

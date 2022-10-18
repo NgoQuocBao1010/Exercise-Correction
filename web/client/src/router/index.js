@@ -5,6 +5,11 @@ const router = createRouter({
     routes: [
         {
             path: "/",
+            name: "Home",
+            component: () => import("../views/Home.vue"),
+        },
+        {
+            path: "/",
             name: "Mediapipe",
             component: () => import("../views/Mediapipe.vue"),
         },

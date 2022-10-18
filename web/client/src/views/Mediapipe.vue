@@ -55,6 +55,7 @@ const onMediapipeResults = (results) => {
             color: "#48C9B0",
             lineWidth: 1,
             visibilityMin: 0.65,
+            radius: 3,
         });
     } else {
     }

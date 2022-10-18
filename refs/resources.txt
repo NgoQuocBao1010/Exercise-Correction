@@ -7,3 +7,7 @@ https://www.dreamstime.com/wrong-correct-plank-position-right-wrong-execution-te
 http://bbpostures.free.fr/Human%20Posture%20Datasets2.htm
 
 https://www.analyticsvidhya.com/blog/2021/07/performing-multi-class-classification-on-fifa-dataset-using-keras/
+
+# Video Streaming
+https://www.smashingmagazine.com/2021/04/building-video-streaming-app-nuxtjs-node-express/
+https://github.com/the-phoenix/TinPennyVideos/tree/master
