@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path("", views.api, name="api"),
-    path("realtime", include("realtime.urls")),
-    path("video", include("stream_video.urls")),
+    path("realtime/", include("realtime.urls")),
+    path("video/", include("stream_video.urls")),
 ]

@@ -1,21 +1,22 @@
 import mediapipe as mp
 import cv2
-
 from django.conf import settings
+
+from .utils import rescale_frame
 
 # Drawing helpers
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 
-def bicep_detection(path: str):
+def bicep_detection(path: str, file_name: str, rescale_percent: float = 40):
     cap = cv2.VideoCapture(path)
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100 + 1)
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) * rescale_percent / 100 + 1)
     size = (width, height)
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/output.mp4", fourcc, 15, size)
+    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{file_name}", fourcc, 15, size)
 
     with mp_pose.Pose(
         min_detection_confidence=0.5, min_tracking_confidence=0.5
@@ -25,6 +26,8 @@ def bicep_detection(path: str):
 
             if not ret:
                 break
+
+            image = rescale_frame(image, rescale_percent)
 
             # Recolor image from BGR to RGB for mediapipe
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -53,3 +56,5 @@ def bicep_detection(path: str):
             )
 
             out.write(image)
+
+    print("DONE")
