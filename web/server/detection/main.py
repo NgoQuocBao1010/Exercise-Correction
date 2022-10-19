@@ -10,8 +10,12 @@ mp_pose = mp.solutions.pose
 
 def bicep_detection(path: str):
     cap = cv2.VideoCapture(path)
-    fourcc = cv2.VideoWriter_fourcc(*"MP4V")
-    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/output.mp4", fourcc, 20.0, (640, 480))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    size = (width, height)
+
+    fourcc = cv2.VideoWriter_fourcc(*"avc1")
+    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/output.mp4", fourcc, 15, size)
 
     with mp_pose.Pose(
         min_detection_confidence=0.5, min_tracking_confidence=0.5

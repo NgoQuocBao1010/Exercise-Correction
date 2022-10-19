@@ -11,3 +11,8 @@ https://www.analyticsvidhya.com/blog/2021/07/performing-multi-class-classificati
 # Video Streaming
 https://www.smashingmagazine.com/2021/04/building-video-streaming-app-nuxtjs-node-express/
 https://github.com/the-phoenix/TinPennyVideos/tree/master
+
+https://github.com/smashingmagazine/Nuxt-Node-video-streaming/blob/main/frontend/pages/player/_name.vue
+
+# Broken Pipe
+https://stackoverflow.com/questions/33208849/python-django-streaming-video-mp4-file-using-httpresponse
