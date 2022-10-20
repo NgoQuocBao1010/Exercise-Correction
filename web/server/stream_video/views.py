@@ -28,7 +28,7 @@ def api(request):
     chunk_size = video_size // 10
 
     response = StreamingHttpResponse(
-        FileWrapper(open(path, "rb"), video_size), content_type=content_type
+        FileWrapper(open(path, "rb"), chunk_size), content_type=content_type
     )
     response["Content-Length"] = video_size
     response["Accept-Ranges"] = "bytes"
@@ -38,17 +38,22 @@ def api(request):
 @api_view(["POST"])
 @parser_classes([MultiPartParser])
 def upload_video(request):
-    if request.method == "POST":
-        video = request.FILES["file"]
-        bicep_detection(video.temporary_file_path(), video.name)
+    try:
+        if request.method == "POST":
+            video = request.FILES["file"]
+            bicep_detection(video.temporary_file_path(), video.name)
 
-        processed_video_url = f"{request.get_host()}{static(f'media/{video.name}')}"
+            processed_video_url = f"{request.get_host()}{static(f'media/{video.name}')}"
 
-        print(static(f"media/{video.name}"))
-        print(static(f"{video.name}"))
-        print(static(f"456789"))
+            return JsonResponse(
+                status=status.HTTP_200_OK,
+                data={"file_name": processed_video_url},
+            )
 
-    return JsonResponse(
-        status=status.HTTP_200_OK,
-        data={"message": "Xin chao", "file_name": processed_video_url},
-    )
+    except Exception as e:
+        return JsonResponse(
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            data={
+                "error": f"Error: {e}",
+            },
+        )
