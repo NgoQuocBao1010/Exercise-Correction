@@ -1,9 +1,22 @@
-<script setup></script>
+<script setup>
+import { computed } from "vue";
+
+const { videoName } = defineProps({
+    videoName: String,
+});
+
+const url = computed(
+    () => `http://127.0.0.1:8000/api/video/stream?video_name=${videoName}`
+);
+</script>
 
 <template>
+    <p>{{ url }}</p>
+
+    <!-- Video Player -->
     <div class="player">
         <video controls muted autoPlay>
-            <source src="http://127.0.0.1:8000/api/video" type="video/mp4" />
+            <source :src="`${url}`" type="video/mp4" />
         </video>
     </div>
 </template>

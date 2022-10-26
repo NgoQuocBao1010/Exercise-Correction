@@ -18,6 +18,8 @@ def bicep_detection(path: str, file_name: str, rescale_percent: float = 40):
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
     out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{file_name}", fourcc, 15, size)
 
+    print(f"PROCESSING VIDEO: {path}")
+
     with mp_pose.Pose(
         min_detection_confidence=0.5, min_tracking_confidence=0.5
     ) as pose:
@@ -56,5 +58,3 @@ def bicep_detection(path: str, file_name: str, rescale_percent: float = 40):
             )
 
             out.write(image)
-
-    print("DONE")
