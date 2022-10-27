@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import datetime
 import os
+import math
 
 from django.conf import settings
 
@@ -60,6 +61,17 @@ def calculate_angle(point1: list, point2: list, point3: list) -> float:
 
     angleInDeg = angleInDeg if angleInDeg <= 180 else 360 - angleInDeg
     return angleInDeg
+
+
+def calculate_distance(pointX, pointY) -> float:
+    '''
+    Calculate a distance between 2 points
+    '''
+
+    x1, y1 = pointX
+    x2, y2 = pointY
+
+    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
 def extract_important_keypoints(results, important_landmarks: list) -> list:

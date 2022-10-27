@@ -5,11 +5,14 @@ from wsgiref.util import FileWrapper
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser
-from django.templatetags.static import static
 from django.http import StreamingHttpResponse
 from django.http import JsonResponse
 
-from detection.main import bicep_curl_error_detection, plank_error_detection
+from detection.main import (
+    bicep_curl_error_detection,
+    plank_error_detection,
+    squat_error_detection,
+)
 from detection.utils import get_static_file_url
 
 
@@ -56,12 +59,14 @@ def stream_video(request):
 @parser_classes([MultiPartParser])
 def upload_video(request):
     # FIXME Video saved still unstable
+    # TODO Handle different uploaded video extension (.mov, .avi)
     try:
         if request.method == "POST":
             video = request.FILES["file"]
 
             # Process and Saved Video
-            bicep_curl_error_detection(video.temporary_file_path(), video.name)
+            # bicep_curl_error_detection(video.temporary_file_path(), video.name)
+            squat_error_detection(video.temporary_file_path(), video.name)
             # plank_error_detection(
             #     file_path=video.temporary_file_path(),
             #     save_name=video.name,
@@ -74,7 +79,7 @@ def upload_video(request):
             )
 
     except Exception as e:
-        print(e)
+        print(f"Error Video Processing: {e}")
         return JsonResponse(
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             data={
