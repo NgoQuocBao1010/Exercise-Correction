@@ -2,6 +2,9 @@ import mediapipe as mp
 import cv2
 import numpy as np
 import datetime
+import os
+
+from django.conf import settings
 
 # Drawing helpers
 mp_drawing = mp.solutions.drawing_utils
@@ -71,3 +74,14 @@ def extract_important_keypoints(results, important_landmarks: list) -> list:
         data.append([keypoint.x, keypoint.y, keypoint.z, keypoint.visibility])
 
     return np.array(data).flatten().tolist()
+
+
+def get_static_file_url(file_name: str) -> str:
+    """
+    Return static url of a file
+    Return None if file is not exist
+    """
+
+    path = f"{settings.STATICFILES_DIRS[0]}/{file_name}"
+
+    return path if os.path.exists(path) else None

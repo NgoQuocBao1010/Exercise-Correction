@@ -7,29 +7,18 @@ from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser
 from django.templatetags.static import static
 from django.http import StreamingHttpResponse
-from django.conf import settings
 from django.http import JsonResponse
 
-from detection.main import bicep_detection
-
-
-def get_static_file_url(file_name: str) -> str:
-    """
-    Return static url of a file
-    Return None if file is not exist
-    """
-
-    path = f"{settings.MEDIA_ROOT}/{file_name}"
-
-    return path if os.path.exists(path) else None
+from detection.main import bicep_curl_error_detection, plank_error_detection
+from detection.utils import get_static_file_url
 
 
 @api_view(["GET"])
 def stream_video(request):
-    '''
+    """
     Query: video_name
     Stream video get from query
-    '''
+    """
     video_name = request.GET.get("video_name")
     if not video_name:
         return JsonResponse(
@@ -39,7 +28,7 @@ def stream_video(request):
             },
         )
 
-    static_url = get_static_file_url(video_name)
+    static_url = get_static_file_url(f"media/{video_name}")
     if not static_url:
         return JsonResponse(
             status=status.HTTP_400_BAD_REQUEST,
@@ -66,12 +55,18 @@ def stream_video(request):
 @api_view(["POST"])
 @parser_classes([MultiPartParser])
 def upload_video(request):
+    # FIXME Video saved still unstable
     try:
         if request.method == "POST":
             video = request.FILES["file"]
 
-            # Process Video
-            bicep_detection(video.temporary_file_path(), video.name)
+            # Process and Saved Video
+            bicep_curl_error_detection(video.temporary_file_path(), video.name)
+            # plank_error_detection(
+            #     file_path=video.temporary_file_path(),
+            #     save_name=video.name,
+            #     rescale_percent=35,
+            # )
 
             return JsonResponse(
                 status=status.HTTP_200_OK,
@@ -79,6 +74,7 @@ def upload_video(request):
             )
 
     except Exception as e:
+        print(e)
         return JsonResponse(
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             data={
