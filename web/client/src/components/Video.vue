@@ -11,7 +11,8 @@ const url = computed(
 </script>
 
 <template>
-    <p>{{ url }}</p>
+    <br />
+    <a :href="`${url}`" target="_blank">{{ url }}</a>
 
     <!-- Video Player -->
     <div class="player">

@@ -63,14 +63,16 @@ def mediapipe_detection(path: str, file_name: str, rescale_percent: float = 40):
             out.write(image)
 
 
-def plank_error_detection(file_path: str, save_name: str, rescale_percent: float = 40):
+def plank_error_detection(
+    file_path: str, name_to_save: str, rescale_percent: float = 40
+):
     cap = cv2.VideoCapture(file_path)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100 + 1)
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) * rescale_percent / 100 + 1)
     size = (width, height)
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{save_name}", fourcc, 15, size)
+    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{name_to_save}", fourcc, 15, size)
 
     plankDetection = PlankDetection()
     plankDetection.load_machine_learning_model()
@@ -118,7 +120,7 @@ def plank_error_detection(file_path: str, save_name: str, rescale_percent: float
 
 
 def bicep_curl_error_detection(
-    file_path: str, save_name: str, rescale_percent: float = 40
+    file_path: str, name_to_save: str, rescale_percent: float = 40
 ):
     cap = cv2.VideoCapture(file_path)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100 + 1)
@@ -126,7 +128,7 @@ def bicep_curl_error_detection(
     size = (width, height)
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{save_name}", fourcc, 15, size)
+    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{name_to_save}", fourcc, 15, size)
 
     bicepCurlDetection = BicepCurlDetection()
     bicepCurlDetection.load_machine_learning_model()
@@ -173,14 +175,17 @@ def bicep_curl_error_detection(
             out.write(image)
 
 
-def squat_error_detection(file_path: str, save_name: str, rescale_percent: float = 40):
+def squat_error_detection(
+    file_path: str, name_to_save: str, rescale_percent: float = 40
+):
     cap = cv2.VideoCapture(file_path)
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100 + 1)
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) * rescale_percent / 100 + 1)
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100)
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) * rescale_percent / 100)
     size = (width, height)
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{save_name}", fourcc, 15, size)
+    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{name_to_save}", fourcc, 15, size)
 
     squatDetection = SquatDetection()
     squatDetection.load_machine_learning_model()

@@ -59,23 +59,24 @@ def stream_video(request):
 @parser_classes([MultiPartParser])
 def upload_video(request):
     # FIXME Video saved still unstable
-    # TODO Handle different uploaded video extension (.mov, .avi)
     try:
         if request.method == "POST":
             video = request.FILES["file"]
 
+            # Convert any video to .mp4
+            video_name, _ = video.name.split(".")
+            name_to_save = f"{video_name}.mp4"
+
             # Process and Saved Video
-            # bicep_curl_error_detection(video.temporary_file_path(), video.name)
-            squat_error_detection(video.temporary_file_path(), video.name)
-            # plank_error_detection(
-            #     file_path=video.temporary_file_path(),
-            #     save_name=video.name,
-            #     rescale_percent=35,
-            # )
+            squat_error_detection(
+                video.temporary_file_path(),
+                name_to_save=name_to_save,
+                rescale_percent=50,
+            )
 
             return JsonResponse(
                 status=status.HTTP_200_OK,
-                data={"processed": True, "file_name": video.name},
+                data={"processed": True, "file_name": name_to_save},
             )
 
     except Exception as e:
