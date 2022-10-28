@@ -160,6 +160,7 @@ class BicepCurlDetection:
 
     def __init__(self) -> None:
         self.init_important_landmarks()
+        self.load_machine_learning_model()
 
         self.left_arm_analysis = BicepPoseAnalysis(
             side="left",

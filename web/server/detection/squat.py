@@ -9,10 +9,16 @@ from .utils import calculate_distance, extract_important_keypoints, get_static_f
 mp_pose = mp.solutions.pose
 
 
-def analyze_foot_knee_placement(results, stage: str, foot_shoulder_ratio_thresholds: list, knee_foot_ratio_thresholds: dict, visibility_threshold: int) -> dict:
-    '''
+def analyze_foot_knee_placement(
+    results,
+    stage: str,
+    foot_shoulder_ratio_thresholds: list,
+    knee_foot_ratio_thresholds: dict,
+    visibility_threshold: int,
+) -> dict:
+    """
     Calculate the ratio between the foot and shoulder for FOOT PLACEMENT analysis
-    
+
     Calculate the ratio between the knee and foot for KNEE PLACEMENT analysis
 
     Return result explanation:
@@ -20,7 +26,7 @@ def analyze_foot_knee_placement(results, stage: str, foot_shoulder_ratio_thresho
         0: Correct knee placement
         1: Placement too tight
         2: Placement too wide
-    '''
+    """
     analyzed_results = {
         "foot_placement": -1,
         "knee_placement": -1,
@@ -29,24 +35,45 @@ def analyze_foot_knee_placement(results, stage: str, foot_shoulder_ratio_thresho
     landmarks = results.pose_landmarks.landmark
 
     # * Visibility check of important landmarks for foot placement analysis
-    left_foot_index_vis = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].visibility
-    right_foot_index_vis = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].visibility
+    left_foot_index_vis = landmarks[
+        mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value
+    ].visibility
+    right_foot_index_vis = landmarks[
+        mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value
+    ].visibility
 
     left_knee_vis = landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].visibility
     right_knee_vis = landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].visibility
 
     # If visibility of any keypoints is low cancel the analysis
-    if (left_foot_index_vis < visibility_threshold or right_foot_index_vis < visibility_threshold or left_knee_vis < visibility_threshold or right_knee_vis < visibility_threshold):
+    if (
+        left_foot_index_vis < visibility_threshold
+        or right_foot_index_vis < visibility_threshold
+        or left_knee_vis < visibility_threshold
+        or right_knee_vis < visibility_threshold
+    ):
         return analyzed_results
-    
+
     # * Calculate shoulder width
-    left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-    right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+    left_shoulder = [
+        landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+        landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
+    ]
+    right_shoulder = [
+        landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+        landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
+    ]
     shoulder_width = calculate_distance(left_shoulder, right_shoulder)
 
     # * Calculate 2-foot width
-    left_foot_index = [landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x, landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y]
-    right_foot_index = [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y]
+    left_foot_index = [
+        landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x,
+        landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y,
+    ]
+    right_foot_index = [
+        landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x,
+        landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y,
+    ]
     foot_width = calculate_distance(left_foot_index, right_foot_index)
 
     # * Calculate foot and shoulder ratio
@@ -60,28 +87,41 @@ def analyze_foot_knee_placement(results, stage: str, foot_shoulder_ratio_thresho
         analyzed_results["foot_placement"] = 1
     elif foot_shoulder_ratio > max_ratio_foot_shoulder:
         analyzed_results["foot_placement"] = 2
-    
+
     # * Visibility check of important landmarks for knee placement analysis
     left_knee_vis = landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].visibility
     right_knee_vis = landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].visibility
 
     # If visibility of any keypoints is low cancel the analysis
-    if (left_knee_vis < visibility_threshold or right_knee_vis < visibility_threshold):
+    if left_knee_vis < visibility_threshold or right_knee_vis < visibility_threshold:
         print("Cannot see foot")
         return analyzed_results
 
     # * Calculate 2 knee width
-    left_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
-    right_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+    left_knee = [
+        landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+        landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y,
+    ]
+    right_knee = [
+        landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
+        landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y,
+    ]
     knee_width = calculate_distance(left_knee, right_knee)
 
     # * Calculate foot and shoulder ratio
     knee_foot_ratio = round(knee_width / foot_width, 1)
 
     # * Analyze KNEE placement
-    up_min_ratio_knee_foot, up_max_ratio_knee_foot = knee_foot_ratio_thresholds.get("up")
-    middle_min_ratio_knee_foot, middle_max_ratio_knee_foot = knee_foot_ratio_thresholds.get("middle")
-    down_min_ratio_knee_foot, down_max_ratio_knee_foot = knee_foot_ratio_thresholds.get("down")
+    up_min_ratio_knee_foot, up_max_ratio_knee_foot = knee_foot_ratio_thresholds.get(
+        "up"
+    )
+    (
+        middle_min_ratio_knee_foot,
+        middle_max_ratio_knee_foot,
+    ) = knee_foot_ratio_thresholds.get("middle")
+    down_min_ratio_knee_foot, down_max_ratio_knee_foot = knee_foot_ratio_thresholds.get(
+        "down"
+    )
 
     if stage == "up":
         if up_min_ratio_knee_foot <= knee_foot_ratio <= up_max_ratio_knee_foot:
@@ -104,9 +144,8 @@ def analyze_foot_knee_placement(results, stage: str, foot_shoulder_ratio_thresho
             analyzed_results["knee_placement"] = 1
         elif knee_foot_ratio > down_max_ratio_knee_foot:
             analyzed_results["knee_placement"] = 2
-    
-    return analyzed_results
 
+    return analyzed_results
 
 
 class SquatDetection:
@@ -123,6 +162,7 @@ class SquatDetection:
 
     def __init__(self) -> None:
         self.init_important_landmarks()
+        self.load_machine_learning_model()
 
         self.current_stage = ""
         self.counter = 0
@@ -200,7 +240,13 @@ class SquatDetection:
                 self.counter += 1
 
             # Analyze squat pose
-            analyzed_results = analyze_foot_knee_placement(results=mp_results, stage=self.current_stage, foot_shoulder_ratio_thresholds=self.FOOT_SHOULDER_RATIO_THRESHOLDS, knee_foot_ratio_thresholds=self.KNEE_FOOT_RATIO_THRESHOLDS, visibility_threshold=self.VISIBILITY_THRESHOLD)
+            analyzed_results = analyze_foot_knee_placement(
+                results=mp_results,
+                stage=self.current_stage,
+                foot_shoulder_ratio_thresholds=self.FOOT_SHOULDER_RATIO_THRESHOLDS,
+                knee_foot_ratio_thresholds=self.KNEE_FOOT_RATIO_THRESHOLDS,
+                visibility_threshold=self.VISIBILITY_THRESHOLD,
+            )
 
             foot_placement_evaluation = analyzed_results["foot_placement"]
             knee_placement_evaluation = analyzed_results["knee_placement"]

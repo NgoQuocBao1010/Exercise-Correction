@@ -8,11 +8,7 @@ from rest_framework.parsers import MultiPartParser
 from django.http import StreamingHttpResponse
 from django.http import JsonResponse
 
-from detection.main import (
-    bicep_curl_error_detection,
-    plank_error_detection,
-    squat_error_detection,
-)
+from detection.main import exercise_detection
 from detection.utils import get_static_file_url
 
 
@@ -58,7 +54,6 @@ def stream_video(request):
 @api_view(["POST"])
 @parser_classes([MultiPartParser])
 def upload_video(request):
-    # FIXME Video saved still unstable
     try:
         if request.method == "POST":
             video = request.FILES["file"]
@@ -68,9 +63,10 @@ def upload_video(request):
             name_to_save = f"{video_name}.mp4"
 
             # Process and Saved Video
-            squat_error_detection(
-                video.temporary_file_path(),
-                name_to_save=name_to_save,
+            exercise_detection(
+                video_file_path=video.temporary_file_path(),
+                video_name_to_save=name_to_save,
+                exercise_type="bicep_curl",
                 rescale_percent=50,
             )
 

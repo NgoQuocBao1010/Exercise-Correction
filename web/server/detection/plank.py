@@ -12,6 +12,7 @@ class PlankDetection:
 
     def __init__(self) -> None:
         self.init_important_landmarks()
+        self.load_machine_learning_model()
 
     def init_important_landmarks(self) -> None:
         """
