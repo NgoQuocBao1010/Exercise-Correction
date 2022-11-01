@@ -19,6 +19,18 @@ https://stackoverflow.com/questions/33208849/python-django-streaming-video-mp4-f
 
 # Docs
 https://www.researchgate.net/publication/324759769_Pose_Trainer_Correcting_Exercise_Posture_using_Pose_Estimation
+https://static1.squarespace.com/static/5c3f69e1cc8fedbc039ea739/t/5e130ff310a69061a71cbd7c/1578307584840/NewTitle_May1_MediaPipe_CVPR_CV4ARVR_Workshop_2019.pdf
+https://deliverypdf.ssrn.com/delivery.php?ID=660029082067073126122108066118094113007059056088020045126117016097090092104092126005013117053102018063007119121012026126072029112038078013065116000120080127115086068088040053113097119111124090126097122095000084031017003093021095072107066078026005116109&EXT=pdf&INDEX=TRUE
+https://arxiv.org/pdf/2110.06877v1.pdf
+https://arxiv.org/pdf/1906.08172v1.pdf
 
 # Github
 https://github.com/stevenzchen/pose-trainer
+
+# Web
+https://xd.adobe.com/ideas/principles/emerging-technology/what-is-computer-vision-how-does-it-work/
+https://www.muscleandstrength.com/articles/bad-technique-stealing-gains
+https://www.cdc.gov/physicalactivity/basics/pa-health/index.htm
+
+# Images
+https://www.inc.com/kevin-j-ryan/self-driving-cars-powered-by-people-playing-games-mighty-ai.html
