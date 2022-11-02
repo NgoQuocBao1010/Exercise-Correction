@@ -31,6 +31,8 @@ https://github.com/stevenzchen/pose-trainer
 https://xd.adobe.com/ideas/principles/emerging-technology/what-is-computer-vision-how-does-it-work/
 https://www.muscleandstrength.com/articles/bad-technique-stealing-gains
 https://www.cdc.gov/physicalactivity/basics/pa-health/index.htm
+https://www.ibm.com/topics/computer-vision#:~:text=Resources-,What%20is%20computer%20vision%3F,recommendations%20based%20on%20that%20information.
+https://ai.googleblog.com/2020/08/on-device-real-time-body-pose-tracking.html
 
 # Images
 https://www.inc.com/kevin-j-ryan/self-driving-cars-powered-by-people-playing-games-mighty-ai.html
