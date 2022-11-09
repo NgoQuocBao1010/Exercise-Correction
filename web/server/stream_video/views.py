@@ -1,5 +1,7 @@
 import os
 import mimetypes
+import traceback
+from datetime import datetime
 from wsgiref.util import FileWrapper
 
 from rest_framework import status
@@ -59,26 +61,35 @@ def upload_video(request):
             video = request.FILES["file"]
 
             # Convert any video to .mp4
-            video_name, _ = video.name.split(".")
-            name_to_save = f"{video_name}.mp4"
+            now = datetime.now()
+            now = int(now.strftime("%Y%m%d%H%M%S"))
+            name_to_save = f"video_{now}.mp4"
 
             # Process and Saved Video
-            exercise_detection(
+            results = exercise_detection(
                 video_file_path=video.temporary_file_path(),
                 video_name_to_save=name_to_save,
-                exercise_type="bicep_curl",
+                exercise_type="plank",
                 rescale_percent=50,
             )
 
+            host = request.build_absolute_uri("/")
+
+            for index, error in enumerate(results):
+                if error["frame"]:
+                    results[index]["frame"] = host + f"static/images/{error['frame']}"
+
             return JsonResponse(
                 status=status.HTTP_200_OK,
-                data={"processed": True, "file_name": name_to_save},
+                data={"processed": True, "file_name": name_to_save, "details": results},
             )
 
     except Exception as e:
         print(f"Error Video Processing: {e}")
+        traceback.print_exc()
+
         return JsonResponse(
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status=status.HTTP_400_BAD_REQUEST,
             data={
                 "error": f"Error: {e}",
             },

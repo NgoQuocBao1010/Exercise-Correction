@@ -14,6 +14,9 @@ class PlankDetection:
         self.init_important_landmarks()
         self.load_machine_learning_model()
 
+        self.previous_stage = "unknown"
+        self.results = []
+
     def init_important_landmarks(self) -> None:
         """
         Determine Important landmarks for plank detection
@@ -63,6 +66,26 @@ class PlankDetection:
         except Exception as e:
             raise Exception(f"Error loading model, {e}")
 
+    def write_frames(self, video_name: str) -> None:
+        """
+        Save frame as evidence
+        """
+        file_name, _ = video_name.split(".")
+        save_folder = get_static_file_url("images")
+        for index, error in enumerate(self.results):
+            try:
+                image_name = f"{file_name}_{index}.jpg"
+                cv2.imwrite(f"{save_folder}/{file_name}_{index}.jpg", error["frame"])
+                self.results[index]["frame"] = image_name
+            except Exception as e:
+                print("ERROR cannot save frame: " + str(e))
+                self.results[index]["frame"] = None
+
+        return self.results
+
+    def clear_results(self) -> None:
+        self.results = []
+
     def detect(self, mp_results, image) -> None:
         """
         Make Plank Errors detection
@@ -75,7 +98,6 @@ class PlankDetection:
             # Make prediction and its probability
             predicted_class = self.model.predict(X)[0]
             prediction_probability = self.model.predict_proba(X)[0]
-            # print(predicted_class, prediction_probability)
 
             # Evaluate model prediction
             if (
@@ -83,21 +105,21 @@ class PlankDetection:
                 and prediction_probability[prediction_probability.argmax()]
                 >= self.PREDICTION_PROBABILITY_THRESHOLD
             ):
-                current_stage = "Correct"
+                current_stage = "correct"
             elif (
                 predicted_class == "L"
                 and prediction_probability[prediction_probability.argmax()]
                 >= self.PREDICTION_PROBABILITY_THRESHOLD
             ):
-                current_stage = "Low back"
+                current_stage = "low back"
             elif (
                 predicted_class == "H"
                 and prediction_probability[prediction_probability.argmax()]
                 >= self.PREDICTION_PROBABILITY_THRESHOLD
             ):
-                current_stage = "High back"
+                current_stage = "high back"
             else:
-                current_stage = "UNKNOWN"
+                current_stage = "unknown"
 
             # Visualization
             # Status box
@@ -148,6 +170,17 @@ class PlankDetection:
                 2,
                 cv2.LINE_AA,
             )
+
+            # Stage management for saving results
+            if current_stage in ["low back", "high back"]:
+                # Stage not change
+                if self.previous_stage == current_stage:
+                    pass
+                # Stage from correct to error
+                elif self.previous_stage != current_stage:
+                    self.results.append({"stage": current_stage, "frame": image})
+
+            self.previous_stage = current_stage
 
         except Exception as e:
             print(f"Error while detecting plank errors: {e}")

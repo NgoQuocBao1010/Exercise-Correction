@@ -6,6 +6,7 @@ import Video from "../components/Video.vue";
 const video = ref(null);
 const processing = ref(false);
 const videoName = ref(null);
+const processedData = ref(null);
 
 const onFileUpload = (event) => {
     const target = event.target;
@@ -21,9 +22,10 @@ const uploadToServer = async () => {
         return;
     }
 
+    processedData.value = null;
     try {
         processing.value = true;
-        const response = await axios.post(
+        const { data } = await axios.post(
             "http://127.0.0.1:8000/api/video/upload",
             { file: video.value },
             {
@@ -33,7 +35,7 @@ const uploadToServer = async () => {
             }
         );
 
-        videoName.value = response.data.file_name;
+        processedData.value = data;
     } catch (e) {
         console.log("Error: ", e);
     } finally {
@@ -52,7 +54,16 @@ const uploadToServer = async () => {
 
     <h2 v-if="processing">Processing ...</h2>
 
-    <Video v-if="videoName" :videoName="videoName"> </Video>
+    <!-- <Video v-if="videoName" :videoName="videoName"> </Video> -->
+
+    <template v-if="processedData">
+        <h3>There are {{ processedData.details.length }} errors found</h3>
+
+        <template v-for="error in processedData.details">
+            <p>Class: {{ error.stage }}</p>
+            <img :src="`${error.frame}`" alt="" width="600" />
+        </template>
+    </template>
 </template>
 
 <style lang="scss" scoped></style>

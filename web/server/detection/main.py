@@ -14,7 +14,7 @@ mp_pose = mp.solutions.pose
 # FIXME: Load machine learning model on init affect Django reload speed
 EXERCISE_DETECTIONS = {
     "plank": PlankDetection(),
-    "bicep_curl": BicepCurlDetection(),
+    # "bicep_curl": BicepCurlDetection(),
     "squat": SquatDetection(),
 }
 
@@ -140,3 +140,9 @@ def exercise_detection(
                 exercise_detection.detect(mp_results=results, image=image)
 
             out.write(image)
+
+    print("PROCESSED ...")
+
+    processed_results = exercise_detection.write_frames(video_name=video_name_to_save)
+    exercise_detection.clear_results()
+    return processed_results
