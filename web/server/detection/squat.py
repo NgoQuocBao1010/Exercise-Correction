@@ -165,7 +165,12 @@ class SquatDetection:
         self.load_machine_learning_model()
 
         self.current_stage = ""
+        self.previous_stage = {
+            "feet": "",
+            "knee": "",
+        }
         self.counter = 0
+        self.results = []
 
     def init_important_landmarks(self) -> None:
         """
@@ -207,6 +212,26 @@ class SquatDetection:
                 self.model = pickle.load(f)
         except Exception as e:
             raise Exception(f"Error loading model, {e}")
+
+    def write_frames(self, video_name: str) -> None:
+        """
+        Save frame as evidence
+        """
+        file_name, _ = video_name.split(".")
+        save_folder = get_static_file_url("images")
+        for index, error in enumerate(self.results):
+            try:
+                image_name = f"{file_name}_{index}.jpg"
+                cv2.imwrite(f"{save_folder}/{file_name}_{index}.jpg", error["frame"])
+                self.results[index]["frame"] = image_name
+            except Exception as e:
+                print("ERROR cannot save frame: " + str(e))
+                self.results[index]["frame"] = None
+
+        return self.results
+
+    def clear_results(self) -> None:
+        self.results = []
 
     def detect(self, mp_results, image) -> None:
         """
@@ -253,23 +278,23 @@ class SquatDetection:
 
             # * Evaluate FEET PLACEMENT error
             if foot_placement_evaluation == -1:
-                feet_placement = "UNK"
+                feet_placement = "unknown"
             elif foot_placement_evaluation == 0:
-                feet_placement = "Correct"
+                feet_placement = "correct"
             elif foot_placement_evaluation == 1:
-                feet_placement = "Too tight"
+                feet_placement = "too tight"
             elif foot_placement_evaluation == 2:
-                feet_placement = "Too wide"
+                feet_placement = "too wide"
 
             # * Evaluate KNEE PLACEMENT error
             if knee_placement_evaluation == -1:
-                knee_placement = "UNK"
+                knee_placement = "unknown"
             elif knee_placement_evaluation == 0:
-                knee_placement = "Correct"
+                knee_placement = "correct"
             elif knee_placement_evaluation == 1:
-                knee_placement = "Too tight"
+                knee_placement = "too tight"
             elif knee_placement_evaluation == 2:
-                knee_placement = "Too wide"
+                knee_placement = "too wide"
 
             # Visualization
             # Status box
@@ -340,6 +365,33 @@ class SquatDetection:
                 2,
                 cv2.LINE_AA,
             )
+
+            # Stage management for saving results
+            # * Feet placement
+            if feet_placement in ["too tight", "too wide"]:
+                # Stage not change
+                if self.previous_stage["feet"] == feet_placement:
+                    pass
+                # Stage from correct to error
+                elif self.previous_stage["feet"] != feet_placement:
+                    self.results.append(
+                        {"stage": f"feet {feet_placement}", "frame": image}
+                    )
+
+                self.previous_stage["feet"] = feet_placement
+
+            # * Knee placement
+            if knee_placement in ["too tight", "too wide"]:
+                # Stage not change
+                if self.previous_stage["knee"] == knee_placement:
+                    pass
+                # Stage from correct to error
+                elif self.previous_stage["knee"] != knee_placement:
+                    self.results.append(
+                        {"stage": f"knee {knee_placement}", "frame": image}
+                    )
+
+                self.previous_stage["knee"] = knee_placement
 
         except Exception as e:
             print(f"Error while detecting squat errors: {e}")

@@ -69,7 +69,7 @@ def upload_video(request):
             results = exercise_detection(
                 video_file_path=video.temporary_file_path(),
                 video_name_to_save=name_to_save,
-                exercise_type="plank",
+                exercise_type="squat",
                 rescale_percent=50,
             )
 
