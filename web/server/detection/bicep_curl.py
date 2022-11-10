@@ -78,7 +78,7 @@ class BicepPoseAnalysis:
 
         return self.is_visible
 
-    def analyze_pose(self, landmarks, frame):
+    def analyze_pose(self, landmarks, frame, results: list):
         """
         - Bicep Counter
         - Errors Detection
@@ -113,6 +113,7 @@ class BicepPoseAnalysis:
                 self.loose_upper_arm = True
                 # save_frame_as_image(frame, f"Loose upper arm: {ground_upper_arm_angle}")
                 self.detected_errors["LOOSE_UPPER_ARM"] += 1
+                results.append({"stage": "loose upper arm", "frame": frame})
         else:
             self.loose_upper_arm = False
 
@@ -130,6 +131,9 @@ class BicepPoseAnalysis:
             ):
                 # save_frame_as_image(self.peak_contraction_frame, f"{self.side} - Peak Contraction: {self.peak_contraction_angle}")
                 self.detected_errors["PEAK_CONTRACTION"] += 1
+                results.append(
+                    {"stage": "peak contraction", "frame": self.peak_contraction_frame}
+                )
 
             # Reset params
             self.peak_contraction_angle = 1000
@@ -181,6 +185,8 @@ class BicepCurlDetection:
         )
 
         self.stand_posture = 0
+        self.previous_stand_posture = 0
+        self.results = []
 
     def init_important_landmarks(self) -> None:
         """
@@ -226,6 +232,26 @@ class BicepCurlDetection:
         except Exception as e:
             raise Exception(f"Error loading model, {e}")
 
+    def write_frames(self, video_name: str) -> None:
+        """
+        Save frame as evidence
+        """
+        file_name, _ = video_name.split(".")
+        save_folder = get_static_file_url("images")
+        for index, error in enumerate(self.results):
+            try:
+                image_name = f"{file_name}_{index}.jpg"
+                cv2.imwrite(f"{save_folder}/{file_name}_{index}.jpg", error["frame"])
+                self.results[index]["frame"] = image_name
+            except Exception as e:
+                print("ERROR cannot save frame: " + str(e))
+                self.results[index]["frame"] = None
+
+        return self.results
+
+    def clear_results(self) -> None:
+        self.results = []
+
     def detect(self, mp_results, image) -> None:
         """
         Make Bicep Curl errors detection
@@ -237,11 +263,15 @@ class BicepCurlDetection:
             (
                 left_bicep_curl_angle,
                 left_ground_upper_arm_angle,
-            ) = self.left_arm_analysis.analyze_pose(landmarks=landmarks, frame=image)
+            ) = self.left_arm_analysis.analyze_pose(
+                landmarks=landmarks, frame=image, results=self.results
+            )
             (
                 right_bicep_curl_angle,
                 right_ground_upper_arm_angle,
-            ) = self.right_arm_analysis.analyze_pose(landmarks=landmarks, frame=image)
+            ) = self.right_arm_analysis.analyze_pose(
+                landmarks=landmarks, frame=image, results=self.results
+            )
 
             # Extract keypoints from frame for the input
             row = extract_important_keypoints(mp_results, self.important_landmarks)
@@ -483,6 +513,15 @@ class BicepCurlDetection:
                     1,
                     cv2.LINE_AA,
                 )
+
+            # Stage management for saving results
+            if self.stand_posture == 1:
+                if self.previous_stand_posture == self.stand_posture:
+                    pass
+                elif self.previous_stand_posture != self.stand_posture:
+                    self.results.append({"stage": "lean too far back", "frame": image})
+
+            self.previous_stand_posture = self.stand_posture
 
         except Exception as e:
             print(f"Error while detecting bicep curl errors: {e}")
