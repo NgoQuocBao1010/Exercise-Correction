@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Roboto:wght@400;700;900&display=swap");
+
+:root {
+    --primary-color: #41b883;
+    --primary-color-rbg: 65, 184, 131;
+    --primary-color-text: #1e2d50;
+    --secondary-color: #34495e;
+    --font-family: "Poppins", sans-serif;
+    --vn-font-family: "Roboto", sans-serif;
+}
+
+* {
+    font-family: var(--font-family);
+}
