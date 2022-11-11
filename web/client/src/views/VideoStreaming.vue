@@ -5,7 +5,7 @@ import axios from "axios";
 import Dropzone from "../components/Dropzone.vue";
 import DropzoneLoading from "../components/DropzoneLoading.vue";
 
-const EXERCISES = ["squat", "plank", "bicep curl", "lunge"];
+const EXERCISES = ["squat", "plank", "bicep_curl", "lunge"];
 
 const submitData = ref({
     videoFile: null,
@@ -13,6 +13,47 @@ const submitData = ref({
 });
 const processedData = ref(null);
 const isProcessing = ref(false);
+const summaryData = computed(() => {
+    if (!processedData.value) return;
+
+    let results = {
+        total: 0,
+        totalInString: "",
+        details: {},
+    };
+
+    console.log(processedData.value);
+
+    let totalErrors = processedData.value.details.length;
+    results.total = totalErrors;
+    if (totalErrors == 0 || totalErrors == 1)
+        results.totalInString = `${totalErrors} error`;
+    else results.totalInString = `${totalErrors} errors`;
+
+    processedData.value.details.forEach((error) => {
+        let stage = error.stage;
+        results.details[stage] = results.details[stage]
+            ? results.details[stage] + 1
+            : 1;
+    });
+
+    return results;
+});
+
+const dummy = {
+    processed: true,
+    file_name: "video_20221111084857.mp4",
+    details: [
+        {
+            stage: "knee too wide",
+            frame: "http://127.0.0.1:8000/static/images/video_20221111084857_0.jpg",
+        },
+        {
+            stage: "knee too tight",
+            frame: "http://127.0.0.1:8000/static/images/video_20221111084857_1.jpg",
+        },
+    ],
+};
 
 const uploadToServer = async () => {
     if (!submitData.value.videoFile) {
@@ -38,12 +79,38 @@ const uploadToServer = async () => {
             }
         );
         processedData.value = data;
+        console.log(data);
     } catch (e) {
         console.log("Error: ", e);
     } finally {
         isProcessing.value = false;
     }
 };
+
+const summary = (data) => {
+    let results = {
+        total: 0,
+        totalInString: "",
+        details: {},
+    };
+
+    let totalErrors = data.details.length;
+    results.total = totalErrors;
+    if (totalErrors == 0 || totalErrors == 1)
+        results.totalInString = `${totalErrors} error`;
+    else results.totalInString = `${totalErrors} errors`;
+
+    data.details.forEach((error) => {
+        let stage = error.stage;
+        results.details[stage] = results.details[stage]
+            ? results.details[stage] + 1
+            : 1;
+    });
+
+    return results;
+};
+
+const summaryDummy = summary(dummy);
 </script>
 
 <template>
@@ -75,15 +142,37 @@ const uploadToServer = async () => {
     </section>
 
     <!-- Results section -->
-    <section>
-        <template v-if="processedData">
-            <h3>There are {{ processedData.details.length }} errors found</h3>
+    <section class="result-section" v-if="processedData">
+        <ul class="tab-links">
+            <li class="active">Summary</li>
+            <li>Detail</li>
+            <li>Full Video</li>
+        </ul>
 
-            <template v-for="error in processedData.details">
-                <p>Class: {{ error.stage }}</p>
-                <img :src="`${error.frame}`" alt="" width="600" />
-            </template>
-        </template>
+        <div class="tab-container">
+            <p class="main">
+                There are
+                <span class="error-color">
+                    {{ summaryData.totalInString }}
+                </span>
+                found.
+
+                <!-- Icon -->
+                <i
+                    class="fa-solid fa-circle-exclamation error-color"
+                    v-if="summaryData.total > 0"
+                ></i>
+                <i class="fa-solid fa-circle-check" v-else></i>
+            </p>
+
+            <ul class="errors" v-if="summaryData.total > 0">
+                <li v-for="(total, error) in summaryData.details">
+                    <i class="fa-solid fa-caret-right"></i>
+
+                    {{ error }}: {{ total }}
+                </li>
+            </ul>
+        </div>
     </section>
 </template>
 
@@ -151,6 +240,65 @@ const uploadToServer = async () => {
                 background-color: transparent;
             }
         }
+    }
+}
+
+.result-section {
+    margin: 2rem 0;
+
+    .tab-links {
+        display: flex;
+
+        li {
+            width: 6em;
+            padding: 0.75rem 1rem;
+            padding-right: 1.2rem;
+            background-color: rgb(180, 179, 179);
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &.active {
+                background-color: var(--primary-color);
+            }
+
+            &:hover {
+                background-color: rgba($color: #41b883, $alpha: 0.4);
+            }
+        }
+    }
+
+    .tab-container {
+        padding: 1rem 2rem;
+        border: 3px solid var(--primary-color);
+
+        p.main {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+
+            i {
+                font-size: 1.5rem;
+            }
+        }
+
+        ul.errors {
+            li {
+                margin: 0.75rem 0;
+                font-size: 1.2rem;
+                text-transform: capitalize;
+
+                i {
+                    margin-right: 1rem;
+                }
+            }
+        }
+    }
+
+    .error-color {
+        color: red;
     }
 }
 </style>
