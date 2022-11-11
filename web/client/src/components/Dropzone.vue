@@ -74,7 +74,7 @@ const byteToMB = (bytes) => {
         @dragenter="handleDragLeave"
         @dragleave="removeDragEventDefault"
         @drop="handleDrop"
-        @click="openFileInput"
+        @click.self="openFileInput"
     >
         <!-- Initial Stage -->
         <template v-if="!isUploaded">
