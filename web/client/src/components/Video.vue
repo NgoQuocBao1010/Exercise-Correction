@@ -11,8 +11,7 @@ const url = computed(
 </script>
 
 <template>
-    <br />
-    <a :href="`${url}`" target="_blank">{{ url }}</a>
+    <!-- <a :href="`${url}`" target="_blank">{{ url }}</a> -->
 
     <!-- Video Player -->
     <div class="player">
@@ -24,6 +23,6 @@ const url = computed(
 
 <style lang="scss" scoped>
 video {
-    width: 400px;
+    width: 100%;
 }
 </style>

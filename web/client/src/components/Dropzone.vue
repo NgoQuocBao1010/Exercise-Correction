@@ -110,6 +110,7 @@ const byteToMB = (bytes) => {
     border-radius: 0.25rem;
     background-color: #fff;
     font-size: 1.25rem;
+    text-align: center;
     transition: 0.25s background-color ease-in-out;
     cursor: pointer;
 

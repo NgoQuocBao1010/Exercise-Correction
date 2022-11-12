@@ -56,6 +56,15 @@ def stream_video(request):
 @api_view(["POST"])
 @parser_classes([MultiPartParser])
 def upload_video(request):
+    exercise_type = request.GET.get("type")
+    if not exercise_type:
+        return JsonResponse(
+            status=status.HTTP_400_BAD_REQUEST,
+            data={
+                "message": "Exercise type has not given",
+            },
+        )
+
     try:
         if request.method == "POST":
             video = request.FILES["file"]
@@ -69,7 +78,7 @@ def upload_video(request):
             results = exercise_detection(
                 video_file_path=video.temporary_file_path(),
                 video_name_to_save=name_to_save,
-                exercise_type="bicep_curl",
+                exercise_type=exercise_type,
                 rescale_percent=50,
             )
 
