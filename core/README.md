@@ -4,7 +4,7 @@
 
 Works model:
 
-1. [Sklearn RF model](./plank_model/model/RF_model.pkl)
+1. [Sklearn KNN model](./plank_model/model/KNN_model.pkl)
 1. [Deep leaning model](./plank_model/model/plank_model_deep_learning.pkl)
 
 Both models work fine, but I'll choose the SKLearn one as it is easier to deploy for website.

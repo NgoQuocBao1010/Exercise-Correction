@@ -8,6 +8,7 @@ from .utils import extract_important_keypoints, get_static_file_url
 
 class PlankDetection:
     ML_MODEL_PATH = get_static_file_url("model/plank_model.pkl")
+    INPUT_SCALER_PATH = get_static_file_url("model/plank_input_scaler.pkl")
     PREDICTION_PROBABILITY_THRESHOLD = 0.6
 
     def __init__(self) -> None:
@@ -57,12 +58,14 @@ class PlankDetection:
         """
         Load machine learning model
         """
-        if not self.ML_MODEL_PATH:
-            raise Exception("Cannot found plank model")
+        if not self.ML_MODEL_PATH or not self.INPUT_SCALER_PATH:
+            raise Exception("Cannot found plank model file or input scaler file")
 
         try:
             with open(self.ML_MODEL_PATH, "rb") as f:
                 self.model = pickle.load(f)
+            with open(self.INPUT_SCALER_PATH, "rb") as f2:
+                self.input_scaler = pickle.load(f2)
         except Exception as e:
             raise Exception(f"Error loading model, {e}")
 
@@ -86,6 +89,7 @@ class PlankDetection:
     def clear_results(self) -> None:
         self.results = []
 
+    # FIXME: work not as good as hope
     def detect(self, mp_results, image) -> None:
         """
         Make Plank Errors detection
@@ -94,6 +98,7 @@ class PlankDetection:
             # Extract keypoints from frame for the input
             row = extract_important_keypoints(mp_results, self.important_landmarks)
             X = pd.DataFrame([row], columns=self.headers[1:])
+            X = pd.DataFrame(self.input_scaler.transform(X))
 
             # Make prediction and its probability
             predicted_class = self.model.predict(X)[0]
