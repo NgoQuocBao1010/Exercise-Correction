@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     # Install libraries
     "rest_framework",
     "corsheaders",
+    "django_extensions",
     # My Apps
     "api.apps.ApiConfig",
     "realtime.apps.RealtimeConfig",

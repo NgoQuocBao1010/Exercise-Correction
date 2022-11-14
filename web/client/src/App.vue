@@ -10,14 +10,6 @@
 
     <!-- Main Content -->
     <main>
-        <!-- <ul>
-            <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
-            <RouterLink :to="{ name: 'Mediapipe' }">Mediapipe</RouterLink>
-            <RouterLink :to="{ name: 'VideoStreaming' }">
-                Video Streaming
-            </RouterLink>
-        </ul> -->
-
         <!-- Page View -->
         <RouterView />
     </main>
