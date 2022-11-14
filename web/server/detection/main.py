@@ -5,6 +5,7 @@ from django.conf import settings
 from .plank import PlankDetection
 from .bicep_curl import BicepCurlDetection
 from .squat import SquatDetection
+from .lunge import LungeDetection
 from .utils import rescale_frame
 
 # Drawing helpers
@@ -16,6 +17,7 @@ EXERCISE_DETECTIONS = {
     "plank": PlankDetection(),
     "bicep_curl": BicepCurlDetection(),
     "squat": SquatDetection(),
+    "lunge": LungeDetection()
 }
 
 
