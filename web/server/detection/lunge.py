@@ -229,7 +229,7 @@ class LungeDetection:
         self.counter = 0
         self.current_stage = ""
 
-    def detect(self, mp_results, image) -> None:
+    def detect(self, mp_results, image, timestamp) -> None:
         """
         Make Lunge Errors detection
         """
@@ -306,7 +306,9 @@ class LungeDetection:
             # Stage management for saving results
             # TODO: Reduce the errors count in 1 rep
             if analyzed_results["error"]:
-                self.results.append({"stage": f"knee angle", "frame": image})
+                self.results.append(
+                    {"stage": f"knee angle", "frame": image, "timestamp": timestamp}
+                )
 
         except Exception as e:
             print(f"Error while detecting lunge errors: {e}")

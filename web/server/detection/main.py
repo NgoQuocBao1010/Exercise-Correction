@@ -17,59 +17,8 @@ EXERCISE_DETECTIONS = {
     "plank": PlankDetection(),
     "bicep_curl": BicepCurlDetection(),
     "squat": SquatDetection(),
-    "lunge": LungeDetection()
+    "lunge": LungeDetection(),
 }
-
-
-def mediapipe_detection(path: str, file_name: str, rescale_percent: float = 40):
-    cap = cv2.VideoCapture(path)
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100 + 1)
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) * rescale_percent / 100 + 1)
-    size = (width, height)
-
-    fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(f"{settings.MEDIA_ROOT}/{file_name}", fourcc, 15, size)
-
-    print(f"PROCESSING VIDEO: {path}")
-
-    with mp_pose.Pose(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5
-    ) as pose:
-        while cap.isOpened():
-            ret, image = cap.read()
-
-            if not ret:
-                break
-
-            image = rescale_frame(image, rescale_percent)
-
-            # Recolor image from BGR to RGB for mediapipe
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image.flags.writeable = False
-
-            results = pose.process(image)
-
-            if not results.pose_landmarks:
-                continue
-
-            # Recolor image from BGR to RGB for mediapipe
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-            # Draw landmarks and connections
-            mp_drawing.draw_landmarks(
-                image,
-                results.pose_landmarks,
-                mp_pose.POSE_CONNECTIONS,
-                mp_drawing.DrawingSpec(
-                    color=(244, 117, 66), thickness=2, circle_radius=4
-                ),
-                mp_drawing.DrawingSpec(
-                    color=(245, 66, 230), thickness=2, circle_radius=2
-                ),
-            )
-
-            out.write(image)
 
 
 def exercise_detection(
@@ -97,10 +46,12 @@ def exercise_detection(
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) * rescale_percent / 100)
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) * rescale_percent / 100)
     size = (width, height)
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    frame_count = 0
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
     out = cv2.VideoWriter(
-        f"{settings.MEDIA_ROOT}/{video_name_to_save}", fourcc, 15, size
+        f"{settings.MEDIA_ROOT}/{video_name_to_save}", fourcc, fps, size
     )
 
     print("PROCESSING VIDEO ...")
@@ -112,6 +63,10 @@ def exercise_detection(
 
             if not ret:
                 break
+
+            # Calculate timestamp
+            frame_count += 1
+            timestamp = int(frame_count / fps)
 
             image = rescale_frame(image, rescale_percent)
 
@@ -139,7 +94,9 @@ def exercise_detection(
             )
 
             if results.pose_landmarks:
-                exercise_detection.detect(mp_results=results, image=image)
+                exercise_detection.detect(
+                    mp_results=results, image=image, timestamp=timestamp
+                )
 
             out.write(image)
 

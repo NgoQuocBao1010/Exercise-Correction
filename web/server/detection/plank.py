@@ -90,7 +90,7 @@ class PlankDetection:
         self.results = []
 
     # FIXME: work not as good as hope
-    def detect(self, mp_results, image) -> None:
+    def detect(self, mp_results, image, timestamp) -> None:
         """
         Make Plank Errors detection
         """
@@ -130,28 +130,6 @@ class PlankDetection:
             # Status box
             cv2.rectangle(image, (0, 0), (250, 60), (245, 117, 16), -1)
 
-            # Display class
-            cv2.putText(
-                image,
-                "CLASS",
-                (95, 12),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (0, 0, 0),
-                1,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                current_stage,
-                (90, 40),
-                cv2.FONT_HERSHEY_COMPLEX,
-                1,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-
             # Display probability
             cv2.putText(
                 image,
@@ -176,6 +154,28 @@ class PlankDetection:
                 cv2.LINE_AA,
             )
 
+            # Display class
+            cv2.putText(
+                image,
+                "CLASS",
+                (95, 12),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.5,
+                (0, 0, 0),
+                1,
+                cv2.LINE_AA,
+            )
+            cv2.putText(
+                image,
+                current_stage,
+                (90, 40),
+                cv2.FONT_HERSHEY_COMPLEX,
+                1,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
+
             # Stage management for saving results
             if current_stage in ["low back", "high back"]:
                 # Stage not change
@@ -183,9 +183,11 @@ class PlankDetection:
                     pass
                 # Stage from correct to error
                 elif self.previous_stage != current_stage:
-                    self.results.append({"stage": current_stage, "frame": image})
+                    self.results.append(
+                        {"stage": current_stage, "frame": image, "timestamp": timestamp}
+                    )
 
             self.previous_stage = current_stage
 
         except Exception as e:
-            print(f"Error while detecting plank errors: {e}")
+            raise Exception(f"Error while detecting plank errors: {e}")

@@ -231,9 +231,15 @@ class SquatDetection:
         return self.results
 
     def clear_results(self) -> None:
+        self.current_stage = ""
+        self.previous_stage = {
+            "feet": "",
+            "knee": "",
+        }
+        self.counter = 0
         self.results = []
 
-    def detect(self, mp_results, image) -> None:
+    def detect(self, mp_results, image, timestamp) -> None:
         """
         Make Squat Errors detection
         """
@@ -375,7 +381,11 @@ class SquatDetection:
                 # Stage from correct to error
                 elif self.previous_stage["feet"] != feet_placement:
                     self.results.append(
-                        {"stage": f"feet {feet_placement}", "frame": image}
+                        {
+                            "stage": f"feet {feet_placement}",
+                            "frame": image,
+                            "timestamp": timestamp,
+                        }
                     )
 
                 self.previous_stage["feet"] = feet_placement
@@ -388,7 +398,11 @@ class SquatDetection:
                 # Stage from correct to error
                 elif self.previous_stage["knee"] != knee_placement:
                     self.results.append(
-                        {"stage": f"knee {knee_placement}", "frame": image}
+                        {
+                            "stage": f"knee {knee_placement}",
+                            "frame": image,
+                            "timestamp": timestamp,
+                        }
                     )
 
                 self.previous_stage["knee"] = knee_placement

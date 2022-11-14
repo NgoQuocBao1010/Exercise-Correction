@@ -78,7 +78,7 @@ class BicepPoseAnalysis:
 
         return self.is_visible
 
-    def analyze_pose(self, landmarks, frame, results: list):
+    def analyze_pose(self, landmarks, frame, results: list, timestamp: int):
         """
         - Bicep Counter
         - Errors Detection
@@ -113,7 +113,9 @@ class BicepPoseAnalysis:
                 self.loose_upper_arm = True
                 # save_frame_as_image(frame, f"Loose upper arm: {ground_upper_arm_angle}")
                 self.detected_errors["LOOSE_UPPER_ARM"] += 1
-                results.append({"stage": "loose upper arm", "frame": frame})
+                results.append(
+                    {"stage": "loose upper arm", "frame": frame, "timestamp": timestamp}
+                )
         else:
             self.loose_upper_arm = False
 
@@ -132,7 +134,11 @@ class BicepPoseAnalysis:
                 # save_frame_as_image(self.peak_contraction_frame, f"{self.side} - Peak Contraction: {self.peak_contraction_angle}")
                 self.detected_errors["PEAK_CONTRACTION"] += 1
                 results.append(
-                    {"stage": "peak contraction", "frame": self.peak_contraction_frame}
+                    {
+                        "stage": "peak contraction",
+                        "frame": self.peak_contraction_frame,
+                        "timestamp": timestamp,
+                    }
                 )
 
             # Reset params
@@ -250,9 +256,11 @@ class BicepCurlDetection:
         return self.results
 
     def clear_results(self) -> None:
+        self.stand_posture = 0
+        self.previous_stand_posture = 0
         self.results = []
 
-    def detect(self, mp_results, image) -> None:
+    def detect(self, mp_results, image, timestamp) -> None:
         """
         Make Bicep Curl errors detection
         """
@@ -264,13 +272,19 @@ class BicepCurlDetection:
                 left_bicep_curl_angle,
                 left_ground_upper_arm_angle,
             ) = self.left_arm_analysis.analyze_pose(
-                landmarks=landmarks, frame=image, results=self.results
+                landmarks=landmarks,
+                frame=image,
+                results=self.results,
+                timestamp=timestamp,
             )
             (
                 right_bicep_curl_angle,
                 right_ground_upper_arm_angle,
             ) = self.right_arm_analysis.analyze_pose(
-                landmarks=landmarks, frame=image, results=self.results
+                landmarks=landmarks,
+                frame=image,
+                results=self.results,
+                timestamp=timestamp,
             )
 
             # Extract keypoints from frame for the input
@@ -519,7 +533,13 @@ class BicepCurlDetection:
                 if self.previous_stand_posture == self.stand_posture:
                     pass
                 elif self.previous_stand_posture != self.stand_posture:
-                    self.results.append({"stage": "lean too far back", "frame": image})
+                    self.results.append(
+                        {
+                            "stage": "lean too far back",
+                            "frame": image,
+                            "timestamp": timestamp,
+                        }
+                    )
 
             self.previous_stand_posture = self.stand_posture
 
