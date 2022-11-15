@@ -59,6 +59,19 @@ const selectedDisplay = ref("summary");
         <div class="tab-container">
             <!-- Summary content -->
             <template v-if="selectedDisplay == 'summary'">
+                <!-- Display Counter or other information -->
+                <p class="main" v-if="data.counter">
+                    <span class="info-color" v-if="data.type != 'bicep_curl'">
+                        Counter: {{ data.counter }}
+                    </span>
+
+                    <span class="info-color" v-else>
+                        Left arm counter: {{ data.counter.left_counter }} -
+                        Right arm counter: {{ data.counter.right_counter }}
+                    </span>
+                </p>
+
+                <!-- Display error -->
                 <p class="main">
                     There are
                     <span class="error-color">
@@ -195,6 +208,10 @@ const selectedDisplay = ref("summary");
 
     .error-color {
         color: red;
+    }
+
+    .info-color {
+        color: rgb(55, 194, 55);
     }
 }
 </style>

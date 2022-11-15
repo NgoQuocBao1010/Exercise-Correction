@@ -147,6 +147,25 @@ class BicepPoseAnalysis:
 
         return (bicep_curl_angle, ground_upper_arm_angle)
 
+    def get_counter(self) -> int:
+        return self.counter
+
+    def reset(self):
+        self.counter = 0
+        self.stage = "down"
+        self.is_visible = True
+        self.detected_errors = {
+            "LOOSE_UPPER_ARM": 0,
+            "PEAK_CONTRACTION": 0,
+        }
+
+        # Params for loose upper arm error detection
+        self.loose_upper_arm = False
+
+        # Params for peak contraction error detection
+        self.peak_contraction_angle = 1000
+        self.peak_contraction_frame = None
+
 
 class BicepCurlDetection:
     ML_MODEL_PATH = get_static_file_url("model/bicep_curl_model.pkl")
@@ -238,7 +257,7 @@ class BicepCurlDetection:
         except Exception as e:
             raise Exception(f"Error loading model, {e}")
 
-    def write_frames(self, video_name: str) -> None:
+    def handle_detected_results(self, video_name: str) -> tuple:
         """
         Save frame as evidence
         """
@@ -253,12 +272,18 @@ class BicepCurlDetection:
                 print("ERROR cannot save frame: " + str(e))
                 self.results[index]["frame"] = None
 
-        return self.results
+        return self.results, {
+            "left_counter": self.left_arm_analysis.get_counter(),
+            "right_counter": self.right_arm_analysis.get_counter(),
+        }
 
     def clear_results(self) -> None:
         self.stand_posture = 0
         self.previous_stand_posture = 0
         self.results = []
+
+        self.right_arm_analysis.reset()
+        self.left_arm_analysis.reset()
 
     def detect(self, mp_results, image, timestamp) -> None:
         """

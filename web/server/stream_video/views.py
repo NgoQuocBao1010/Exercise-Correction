@@ -75,22 +75,35 @@ def upload_video(request):
             name_to_save = f"video_{now}.mp4"
 
             # Process and Saved Video
-            results = exercise_detection(
+            results, *other_data = exercise_detection(
                 video_file_path=video.temporary_file_path(),
                 video_name_to_save=name_to_save,
                 exercise_type=exercise_type,
-                rescale_percent=50,
+                rescale_percent=30,
             )
 
-            host = request.build_absolute_uri("/")
+            print(results)
 
+            # Convert images' path to URL
+            host = request.build_absolute_uri("/")
             for index, error in enumerate(results):
                 if error["frame"]:
                     results[index]["frame"] = host + f"static/images/{error['frame']}"
 
+            response_data = {
+                "type": exercise_type,
+                "processed": True,
+                "file_name": name_to_save,
+                "details": results,
+            }
+
+            # Handle others data
+            if exercise_type in ["squat", "lunge", "bicep_curl"]:
+                response_data["counter"] = other_data[0]
+
             return JsonResponse(
                 status=status.HTTP_200_OK,
-                data={"processed": True, "file_name": name_to_save, "details": results},
+                data=response_data,
             )
 
     except Exception as e:

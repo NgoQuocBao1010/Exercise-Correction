@@ -213,9 +213,9 @@ class SquatDetection:
         except Exception as e:
             raise Exception(f"Error loading model, {e}")
 
-    def write_frames(self, video_name: str) -> None:
+    def handle_detected_results(self, video_name: str) -> tuple:
         """
-        Save frame as evidence
+        Save error frame as evidence
         """
         file_name, _ = video_name.split(".")
         save_folder = get_static_file_url("images")
@@ -228,7 +228,7 @@ class SquatDetection:
                 print("ERROR cannot save frame: " + str(e))
                 self.results[index]["frame"] = None
 
-        return self.results
+        return self.results, self.counter
 
     def clear_results(self) -> None:
         self.current_stage = ""

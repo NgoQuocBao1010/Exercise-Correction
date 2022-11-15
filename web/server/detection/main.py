@@ -112,6 +112,8 @@ def exercise_detection(
 
     print("PROCESSED ...")
 
-    processed_results = exercise_detection.write_frames(video_name=video_name_to_save)
+    processed_results = exercise_detection.handle_detected_results(
+        video_name=video_name_to_save
+    )
     exercise_detection.clear_results()
     return processed_results
