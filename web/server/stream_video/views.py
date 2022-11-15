@@ -82,8 +82,6 @@ def upload_video(request):
                 rescale_percent=30,
             )
 
-            print(results)
-
             # Convert images' path to URL
             host = request.build_absolute_uri("/")
             for index, error in enumerate(results):
@@ -108,7 +106,7 @@ def upload_video(request):
 
     except Exception as e:
         print(f"Error Video Processing: {e}")
-        traceback.print_exc()
+        # traceback.print_exc()
 
         return JsonResponse(
             status=status.HTTP_400_BAD_REQUEST,

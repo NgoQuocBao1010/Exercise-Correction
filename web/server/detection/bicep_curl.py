@@ -4,9 +4,16 @@ import cv2
 import numpy as np
 import pandas as pd
 import pickle
+import traceback
 
-from .utils import calculate_angle, extract_important_keypoints, get_static_file_url
+from .utils import (
+    calculate_angle,
+    extract_important_keypoints,
+    get_static_file_url,
+    get_drawing_color,
+)
 
+mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 
@@ -83,11 +90,12 @@ class BicepPoseAnalysis:
         - Bicep Counter
         - Errors Detection
         """
+        has_error = False
         self.get_joints(landmarks)
 
         # Cancel calculation if visibility is poor
         if not self.is_visible:
-            return (None, None)
+            return (None, None, has_error)
 
         # * Calculate curl angle for counter
         bicep_curl_angle = int(calculate_angle(self.shoulder, self.elbow, self.wrist))
@@ -108,10 +116,11 @@ class BicepPoseAnalysis:
 
         # * Evaluation for LOOSE UPPER ARM error
         if ground_upper_arm_angle > self.loose_upper_arm_angle_threshold:
+            has_error = True
+
             # Limit the saved frame
             if not self.loose_upper_arm:
                 self.loose_upper_arm = True
-                # save_frame_as_image(frame, f"Loose upper arm: {ground_upper_arm_angle}")
                 self.detected_errors["LOOSE_UPPER_ARM"] += 1
                 results.append(
                     {"stage": "loose upper arm", "frame": frame, "timestamp": timestamp}
@@ -120,6 +129,7 @@ class BicepPoseAnalysis:
             self.loose_upper_arm = False
 
         # * Evaluate PEAK CONTRACTION error
+        # FIXME: Cannot detect PC error at current frame
         if self.stage == "up" and bicep_curl_angle < self.peak_contraction_angle:
             # Save peaked contraction every rep
             self.peak_contraction_angle = bicep_curl_angle
@@ -131,7 +141,6 @@ class BicepPoseAnalysis:
                 self.peak_contraction_angle != 1000
                 and self.peak_contraction_angle >= self.peak_contraction_threshold
             ):
-                # save_frame_as_image(self.peak_contraction_frame, f"{self.side} - Peak Contraction: {self.peak_contraction_angle}")
                 self.detected_errors["PEAK_CONTRACTION"] += 1
                 results.append(
                     {
@@ -140,12 +149,13 @@ class BicepPoseAnalysis:
                         "timestamp": timestamp,
                     }
                 )
+                has_error = True
 
             # Reset params
             self.peak_contraction_angle = 1000
             self.peak_contraction_frame = None
 
-        return (bicep_curl_angle, ground_upper_arm_angle)
+        return (bicep_curl_angle, ground_upper_arm_angle, has_error)
 
     def get_counter(self) -> int:
         return self.counter
@@ -212,6 +222,7 @@ class BicepCurlDetection:
         self.stand_posture = 0
         self.previous_stand_posture = 0
         self.results = []
+        self.has_error = False
 
     def init_important_landmarks(self) -> None:
         """
@@ -281,6 +292,7 @@ class BicepCurlDetection:
         self.stand_posture = 0
         self.previous_stand_posture = 0
         self.results = []
+        self.has_error = False
 
         self.right_arm_analysis.reset()
         self.left_arm_analysis.reset()
@@ -289,6 +301,8 @@ class BicepCurlDetection:
         """
         Make Bicep Curl errors detection
         """
+        self.has_error = False
+
         try:
             video_dimensions = [image.shape[1], image.shape[0]]
             landmarks = mp_results.pose_landmarks.landmark
@@ -296,15 +310,18 @@ class BicepCurlDetection:
             (
                 left_bicep_curl_angle,
                 left_ground_upper_arm_angle,
+                left_arm_error,
             ) = self.left_arm_analysis.analyze_pose(
                 landmarks=landmarks,
                 frame=image,
                 results=self.results,
                 timestamp=timestamp,
             )
+
             (
                 right_bicep_curl_angle,
                 right_ground_upper_arm_angle,
+                right_arm_error,
             ) = self.right_arm_analysis.analyze_pose(
                 landmarks=landmarks,
                 frame=image,
@@ -330,7 +347,42 @@ class BicepCurlDetection:
             if prediction_probability >= self.POSTURE_ERROR_THRESHOLD:
                 self.stand_posture = predicted_class
 
+            # Stage management for saving results
+            if self.stand_posture == 1:
+                if self.previous_stand_posture == self.stand_posture:
+                    pass
+                elif self.previous_stand_posture != self.stand_posture:
+                    self.results.append(
+                        {
+                            "stage": "lean too far back",
+                            "frame": image,
+                            "timestamp": timestamp,
+                        }
+                    )
+
+                self.has_error = True
+
+            self.previous_stand_posture = self.stand_posture
+
+            self.has_error = (
+                True if (right_arm_error or left_arm_error) else self.has_error
+            )
+
             # Visualization
+            # Draw landmarks and connections
+            landmark_color, connection_color = get_drawing_color(self.has_error)
+            mp_drawing.draw_landmarks(
+                image,
+                mp_results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+                mp_drawing.DrawingSpec(
+                    color=landmark_color, thickness=2, circle_radius=2
+                ),
+                mp_drawing.DrawingSpec(
+                    color=connection_color, thickness=2, circle_radius=1
+                ),
+            )
+
             # Status box
             cv2.rectangle(image, (0, 0), (500, 40), (245, 117, 16), -1)
 
@@ -553,20 +605,6 @@ class BicepCurlDetection:
                     cv2.LINE_AA,
                 )
 
-            # Stage management for saving results
-            if self.stand_posture == 1:
-                if self.previous_stand_posture == self.stand_posture:
-                    pass
-                elif self.previous_stand_posture != self.stand_posture:
-                    self.results.append(
-                        {
-                            "stage": "lean too far back",
-                            "frame": image,
-                            "timestamp": timestamp,
-                        }
-                    )
-
-            self.previous_stand_posture = self.stand_posture
-
         except Exception as e:
-            print(f"Error while detecting bicep curl errors: {e}")
+            traceback.print_exc()
+            raise e

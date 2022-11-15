@@ -90,19 +90,6 @@ def exercise_detection(
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-            # Draw landmarks and connections
-            mp_drawing.draw_landmarks(
-                image,
-                results.pose_landmarks,
-                mp_pose.POSE_CONNECTIONS,
-                mp_drawing.DrawingSpec(
-                    color=(244, 117, 66), thickness=2, circle_radius=4
-                ),
-                mp_drawing.DrawingSpec(
-                    color=(245, 66, 230), thickness=2, circle_radius=2
-                ),
-            )
-
             if results.pose_landmarks:
                 exercise_detection.detect(
                     mp_results=results, image=image, timestamp=timestamp

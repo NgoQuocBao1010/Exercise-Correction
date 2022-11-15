@@ -4,9 +4,15 @@ import numpy as np
 import pandas as pd
 import pickle
 
-from .utils import calculate_distance, extract_important_keypoints, get_static_file_url
+from .utils import (
+    calculate_distance,
+    extract_important_keypoints,
+    get_static_file_url,
+    get_drawing_color,
+)
 
 mp_pose = mp.solutions.pose
+mp_drawing = mp.solutions.drawing_utils
 
 
 def analyze_foot_knee_placement(
@@ -171,6 +177,7 @@ class SquatDetection:
         }
         self.counter = 0
         self.results = []
+        self.has_error = False
 
     def init_important_landmarks(self) -> None:
         """
@@ -238,6 +245,7 @@ class SquatDetection:
         }
         self.counter = 0
         self.results = []
+        self.has_error = False
 
     def detect(self, mp_results, image, timestamp) -> None:
         """
@@ -302,7 +310,64 @@ class SquatDetection:
             elif knee_placement_evaluation == 2:
                 knee_placement = "too wide"
 
+            # Stage management for saving results
+            # * Feet placement
+            if feet_placement in ["too tight", "too wide"]:
+                # Stage not change
+                if self.previous_stage["feet"] == feet_placement:
+                    pass
+                # Stage from correct to error
+                elif self.previous_stage["feet"] != feet_placement:
+                    self.results.append(
+                        {
+                            "stage": f"feet {feet_placement}",
+                            "frame": image,
+                            "timestamp": timestamp,
+                        }
+                    )
+
+                self.previous_stage["feet"] = feet_placement
+
+            # * Knee placement
+            if knee_placement in ["too tight", "too wide"]:
+                # Stage not change
+                if self.previous_stage["knee"] == knee_placement:
+                    pass
+                # Stage from correct to error
+                elif self.previous_stage["knee"] != knee_placement:
+                    self.results.append(
+                        {
+                            "stage": f"knee {knee_placement}",
+                            "frame": image,
+                            "timestamp": timestamp,
+                        }
+                    )
+
+                self.previous_stage["knee"] = knee_placement
+
+            if feet_placement in ["too tight", "too wide"] or knee_placement in [
+                "too tight",
+                "too wide",
+            ]:
+                self.has_error = True
+            else:
+                self.has_error = False
+
             # Visualization
+            # Draw landmarks and connections
+            landmark_color, connection_color = get_drawing_color(self.has_error)
+            mp_drawing.draw_landmarks(
+                image,
+                mp_results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+                mp_drawing.DrawingSpec(
+                    color=landmark_color, thickness=2, circle_radius=2
+                ),
+                mp_drawing.DrawingSpec(
+                    color=connection_color, thickness=2, circle_radius=1
+                ),
+            )
+
             # Status box
             cv2.rectangle(image, (0, 0), (500, 60), (245, 117, 16), -1)
 
@@ -371,41 +436,6 @@ class SquatDetection:
                 2,
                 cv2.LINE_AA,
             )
-
-            # Stage management for saving results
-            # * Feet placement
-            if feet_placement in ["too tight", "too wide"]:
-                # Stage not change
-                if self.previous_stage["feet"] == feet_placement:
-                    pass
-                # Stage from correct to error
-                elif self.previous_stage["feet"] != feet_placement:
-                    self.results.append(
-                        {
-                            "stage": f"feet {feet_placement}",
-                            "frame": image,
-                            "timestamp": timestamp,
-                        }
-                    )
-
-                self.previous_stage["feet"] = feet_placement
-
-            # * Knee placement
-            if knee_placement in ["too tight", "too wide"]:
-                # Stage not change
-                if self.previous_stage["knee"] == knee_placement:
-                    pass
-                # Stage from correct to error
-                elif self.previous_stage["knee"] != knee_placement:
-                    self.results.append(
-                        {
-                            "stage": f"knee {knee_placement}",
-                            "frame": image,
-                            "timestamp": timestamp,
-                        }
-                    )
-
-                self.previous_stage["knee"] = knee_placement
 
         except Exception as e:
             print(f"Error while detecting squat errors: {e}")

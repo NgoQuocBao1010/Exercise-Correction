@@ -4,8 +4,14 @@ import numpy as np
 import pandas as pd
 import pickle
 
-from .utils import calculate_angle, extract_important_keypoints, get_static_file_url
+from .utils import (
+    calculate_angle,
+    extract_important_keypoints,
+    get_static_file_url,
+    get_drawing_color,
+)
 
+mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 
@@ -113,21 +119,15 @@ def analyze_knee_angle(
         right_color = (255, 255, 255) if not results["right"]["error"] else (0, 0, 255)
         left_color = (255, 255, 255) if not results["left"]["error"] else (0, 0, 255)
 
-        right_font_scale = 0.5 if not results["right"]["error"] else 1
-        left_font_scale = 0.5 if not results["left"]["error"] else 1
-
-        right_thickness = 1 if not results["right"]["error"] else 2
-        left_thickness = 1 if not results["left"]["error"] else 2
-
         # Visualize angles
         cv2.putText(
             image,
             str(int(results["right"]["angle"])),
             tuple(np.multiply(right_knee, video_dimensions).astype(int)),
             cv2.FONT_HERSHEY_COMPLEX,
-            right_font_scale,
+            0.5,
             right_color,
-            right_thickness,
+            1,
             cv2.LINE_AA,
         )
         cv2.putText(
@@ -135,9 +135,9 @@ def analyze_knee_angle(
             str(int(results["left"]["angle"])),
             tuple(np.multiply(left_knee, video_dimensions).astype(int)),
             cv2.FONT_HERSHEY_COMPLEX,
-            left_font_scale,
+            0.5,
             left_color,
-            left_thickness,
+            1,
             cv2.LINE_AA,
         )
 
@@ -158,6 +158,7 @@ class LungeDetection:
         self.current_stage = ""
         self.counter = 0
         self.results = []
+        self.has_error = False
 
     def init_important_landmarks(self) -> None:
         """
@@ -228,6 +229,7 @@ class LungeDetection:
         self.results = []
         self.counter = 0
         self.current_stage = ""
+        self.has_error = False
 
     def detect(self, mp_results, image, timestamp) -> None:
         """
@@ -277,7 +279,29 @@ class LungeDetection:
                 draw_to_image=(image, video_dimensions),
             )
 
+            # Stage management for saving results
+            # TODO: Reduce the errors count in 1 rep
+            self.has_error = analyzed_results["error"]
+            if analyzed_results["error"]:
+                self.results.append(
+                    {"stage": f"knee angle", "frame": image, "timestamp": timestamp}
+                )
+
             # Visualization
+            # Draw landmarks and connections
+            landmark_color, connection_color = get_drawing_color(self.has_error)
+            mp_drawing.draw_landmarks(
+                image,
+                mp_results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+                mp_drawing.DrawingSpec(
+                    color=landmark_color, thickness=2, circle_radius=2
+                ),
+                mp_drawing.DrawingSpec(
+                    color=connection_color, thickness=2, circle_radius=1
+                ),
+            )
+
             # Status box
             cv2.rectangle(image, (0, 0), (500, 60), (245, 117, 16), -1)
 
@@ -302,13 +326,6 @@ class LungeDetection:
                 2,
                 cv2.LINE_AA,
             )
-
-            # Stage management for saving results
-            # TODO: Reduce the errors count in 1 rep
-            if analyzed_results["error"]:
-                self.results.append(
-                    {"stage": f"knee angle", "frame": image, "timestamp": timestamp}
-                )
 
         except Exception as e:
             print(f"Error while detecting lunge errors: {e}")

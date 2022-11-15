@@ -98,3 +98,13 @@ def get_static_file_url(file_name: str) -> str:
     path = f"{settings.STATICFILES_DIRS[0]}/{file_name}"
 
     return path if os.path.exists(path) else None
+
+
+def get_drawing_color(error: bool) -> dict:
+    LIGHT_BLUE = (244, 117, 66)
+    LIGHT_PINK = (245, 66, 230)
+
+    LIGHT_RED = (29, 62, 199)
+    LIGHT_YELLOW = (1, 143, 241)
+
+    return (LIGHT_YELLOW, LIGHT_RED) if error else (LIGHT_BLUE, LIGHT_PINK)

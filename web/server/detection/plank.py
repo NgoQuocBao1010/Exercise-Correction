@@ -2,8 +2,12 @@ import cv2
 import numpy as np
 import pandas as pd
 import pickle
+import mediapipe as mp
 
-from .utils import extract_important_keypoints, get_static_file_url
+from .utils import extract_important_keypoints, get_static_file_url, get_drawing_color
+
+mp_drawing = mp.solutions.drawing_utils
+mp_pose = mp.solutions.pose
 
 
 class PlankDetection:
@@ -17,6 +21,7 @@ class PlankDetection:
 
         self.previous_stage = "unknown"
         self.results = []
+        self.has_error = False
 
     def init_important_landmarks(self) -> None:
         """
@@ -87,7 +92,9 @@ class PlankDetection:
         return self.results, self.previous_stage
 
     def clear_results(self) -> None:
+        self.previous_stage = "unknown"
         self.results = []
+        self.has_error = False
 
     # FIXME: work not as good as hope
     def detect(self, mp_results, image, timestamp) -> None:
@@ -126,7 +133,37 @@ class PlankDetection:
             else:
                 current_stage = "unknown"
 
+            # Stage management for saving results
+            if current_stage in ["low back", "high back"]:
+                # Stage not change
+                if self.previous_stage == current_stage:
+                    pass
+                # Stage from correct to error
+                elif self.previous_stage != current_stage:
+                    self.results.append(
+                        {"stage": current_stage, "frame": image, "timestamp": timestamp}
+                    )
+                    self.has_error = True
+            else:
+                self.has_error = False
+
+            self.previous_stage = current_stage
+
             # Visualization
+            # Draw landmarks and connections
+            landmark_color, connection_color = get_drawing_color(self.has_error)
+            mp_drawing.draw_landmarks(
+                image,
+                mp_results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+                mp_drawing.DrawingSpec(
+                    color=landmark_color, thickness=2, circle_radius=2
+                ),
+                mp_drawing.DrawingSpec(
+                    color=connection_color, thickness=2, circle_radius=1
+                ),
+            )
+
             # Status box
             cv2.rectangle(image, (0, 0), (250, 60), (245, 117, 16), -1)
 
@@ -175,19 +212,6 @@ class PlankDetection:
                 2,
                 cv2.LINE_AA,
             )
-
-            # Stage management for saving results
-            if current_stage in ["low back", "high back"]:
-                # Stage not change
-                if self.previous_stage == current_stage:
-                    pass
-                # Stage from correct to error
-                elif self.previous_stage != current_stage:
-                    self.results.append(
-                        {"stage": current_stage, "frame": image, "timestamp": timestamp}
-                    )
-
-            self.previous_stage = current_stage
 
         except Exception as e:
             raise Exception(f"Error while detecting plank errors: {e}")
