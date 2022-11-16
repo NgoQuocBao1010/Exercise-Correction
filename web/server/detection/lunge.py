@@ -280,12 +280,29 @@ class LungeDetection:
             )
 
             # Stage management for saving results
-            # TODO: Reduce the errors count in 1 rep
             self.has_error = analyzed_results["error"]
             if analyzed_results["error"]:
-                self.results.append(
-                    {"stage": f"knee angle", "frame": image, "timestamp": timestamp}
-                )
+                # Limit the error frames saved in a rep
+                if len(self.results) == 0:
+                    self.results.append(
+                        {
+                            "stage": f"knee angle",
+                            "frame": image,
+                            "timestamp": timestamp,
+                            "counter": self.counter,
+                        }
+                    )
+                else:
+                    last_error_counter = self.results[-1]["counter"]
+                    if self.counter != last_error_counter:
+                        self.results.append(
+                            {
+                                "stage": f"knee angle",
+                                "frame": image,
+                                "timestamp": timestamp,
+                                "counter": self.counter,
+                            }
+                        )
 
             # Visualization
             # Draw landmarks and connections
