@@ -96,7 +96,6 @@ class PlankDetection:
         self.results = []
         self.has_error = False
 
-    # FIXME: work not as good as hope
     def detect(self, mp_results, image, timestamp) -> None:
         """
         Make Plank Errors detection

@@ -79,7 +79,7 @@ def upload_video(request):
                 video_file_path=video.temporary_file_path(),
                 video_name_to_save=name_to_save,
                 exercise_type=exercise_type,
-                rescale_percent=30,
+                rescale_percent=40,
             )
 
             # Convert images' path to URL
