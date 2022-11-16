@@ -27,8 +27,12 @@ const summaryData = computed(() => {
     return results;
 });
 const selectedDisplay = ref("summary");
+const videoStart = ref(0);
 
-// TODO: Jump to a point in video where an error appears
+const jumpToVideoLocation = (second) => {
+    selectedDisplay.value = "video";
+    videoStart.value = second;
+};
 </script>
 
 <template>
@@ -101,9 +105,12 @@ const selectedDisplay = ref("summary");
                 <div class="box-error" v-for="(error, index) in data.details">
                     <p>
                         {{ index + 1 }}. {{ error.stage }} at
-                        <span class="error-time"
-                            >{{ error.timestamp }} second</span
+                        <span
+                            class="error-time"
+                            @click="jumpToVideoLocation(error.timestamp)"
                         >
+                            {{ error.timestamp }} second
+                        </span>
                     </p>
                     <img :src="`${error.frame}`" />
                     <hr />
@@ -113,7 +120,10 @@ const selectedDisplay = ref("summary");
             <!-- Full Video content -->
             <template v-if="selectedDisplay == 'video'">
                 <div class="video-container">
-                    <Video :video-name="data.file_name"></Video>
+                    <Video
+                        :video-name="data.file_name"
+                        :start-at="videoStart"
+                    ></Video>
                 </div>
             </template>
         </div>
@@ -189,6 +199,7 @@ const selectedDisplay = ref("summary");
 
             span.error-time {
                 color: rgb(85, 149, 171);
+                cursor: pointer;
             }
 
             hr {

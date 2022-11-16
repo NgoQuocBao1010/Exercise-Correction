@@ -12,3 +12,11 @@
 * {
     font-family: var(--font-family);
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+.invisible {
+    visibility: hidden;
+}

@@ -1,21 +1,38 @@
 <script setup>
-import { computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
-const { videoName } = defineProps({
+const { videoName, startAt } = defineProps({
     videoName: String,
+    startAt: {
+        required: false,
+        type: Number,
+    },
 });
-
 const url = computed(
     () => `http://127.0.0.1:8000/api/video/stream?video_name=${videoName}`
 );
+
+const video = ref(null);
+const videoContainer = ref(null);
+onMounted(() => {
+    if (startAt) video.value.currentTime = startAt;
+});
+
+const handleVideoLoad = () => {
+    videoContainer.value.scrollIntoView({ behavior: "smooth", block: "end" });
+};
 </script>
 
 <template>
-    <!-- <a :href="`${url}`" target="_blank">{{ url }}</a> -->
-
     <!-- Video Player -->
-    <div class="player">
-        <video controls muted autoPlay>
+    <div class="player" ref="videoContainer">
+        <video
+            controls
+            muted
+            autoPlay
+            ref="video"
+            @loadeddata="handleVideoLoad"
+        >
             <source :src="`${url}`" type="video/mp4" />
         </video>
     </div>
