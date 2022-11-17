@@ -14,7 +14,7 @@ Works model:
 
 Works model:
 
-1. [Sklearn RF model](./bicep_model/model/RF_model.pkl)
+1. [Sklearn KNN model](./bicep_model/model/KNN_model.pkl)
 1. [Deep leaning model](./bicep_model/model/bicep_model_deep_learning.pkl)
 
-As from the test results, the deep learning model yield better predictions.
+As from the test results, the KNN model yield better predictions.
