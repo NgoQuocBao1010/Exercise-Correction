@@ -19,7 +19,15 @@ Work models:
 
 As from the test results, the KNN model yield better predictions.
 
-### 3. Lunge
+### 3. Squat
+
+Work models:
+
+1. [Sklearn KNN model](./squat_model/model/KNN_model.pkl)
+
+As from the test results, the KNN model yield better predictions.
+
+### 4. Lunge
 
 Work models for error detection:
 
