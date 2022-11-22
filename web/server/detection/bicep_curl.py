@@ -340,15 +340,17 @@ class BicepCurlDetection:
             X = pd.DataFrame(self.input_scaler.transform(X))
 
             # Make prediction and its probability
-            prediction = self.model.predict(X, verbose=0)
-            predicted_class = np.argmax(prediction, axis=1)[0]
-            prediction_probability = max(prediction.tolist()[0])
+            predicted_class = self.model.predict(X)[0]
+            prediction_probabilities = self.model.predict_proba(X)[0]
+            class_prediction_probability = round(
+                prediction_probabilities[np.argmax(prediction_probabilities)], 2
+            )
 
-            if prediction_probability >= self.POSTURE_ERROR_THRESHOLD:
+            if class_prediction_probability >= self.POSTURE_ERROR_THRESHOLD:
                 self.stand_posture = predicted_class
 
             # Stage management for saving results
-            if self.stand_posture == 1:
+            if self.stand_posture == "L":
                 if self.previous_stand_posture == self.stand_posture:
                     pass
                 elif self.previous_stand_posture != self.stand_posture:
@@ -532,8 +534,8 @@ class BicepCurlDetection:
             )
             cv2.putText(
                 image,
-                str("C" if self.stand_posture == 0 else "L")
-                + f" ,{predicted_class}, {prediction_probability}",
+                str(self.stand_posture)
+                + f" ,{predicted_class}, {class_prediction_probability}",
                 (440, 30),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.3,
