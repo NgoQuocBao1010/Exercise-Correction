@@ -35,6 +35,9 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
+# Keras Tuner
+**/keras_tuner_dir
+
 # Django server
 __pycache__/
 db.sqlite3
