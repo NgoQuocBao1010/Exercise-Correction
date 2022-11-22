@@ -2,7 +2,7 @@
 
 ### 1. Plank
 
-Works model:
+Work models:
 
 1. [Sklearn LR model](./plank_model/model/LR_model.pkl)
 1. [Sklearn RF model](./plank_model/model/RF_model.pkl)
@@ -12,9 +12,20 @@ Works model:
 
 ### 2. Bicep
 
-Works model:
+Work models:
 
 1. [Sklearn KNN model](./bicep_model/model/KNN_model.pkl)
 1. [Deep leaning model](./bicep_model/model/bicep_model_deep_learning.pkl)
 
 As from the test results, the KNN model yield better predictions.
+
+### 3. Lunge
+
+Work models for error detection:
+
+1. [Sklearn LR model](./lunge_model/model/sklearn/err_LR_model.pkl)
+1. [Deep leaning model](./lunge_model/model/dp/err_lunge_dp.pkl)
+
+Work models for stage prediction:
+
+1. [SKlearn KNN model](./lunge_model/model/sklearn/stage_KNN_model.pkl)
