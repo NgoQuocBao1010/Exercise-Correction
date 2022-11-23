@@ -145,7 +145,8 @@ def analyze_knee_angle(
 
 
 class LungeDetection:
-    ML_MODEL_PATH = get_static_file_url("model/lunge_model.pkl")
+    STAGE_ML_MODEL_PATH = get_static_file_url("model/lunge_stage_model.pkl")
+    ERR_ML_MODEL_PATH = get_static_file_url("model/lunge_err_model.pkl")
     INPUT_SCALER_PATH = get_static_file_url("model/lunge_input_scaler.pkl")
 
     PREDICTION_PROB_THRESHOLD = 0.6
@@ -196,12 +197,19 @@ class LungeDetection:
         """
         Load machine learning model
         """
-        if not self.ML_MODEL_PATH or not self.INPUT_SCALER_PATH:
-            raise Exception("Cannot found lunge model")
+        if (
+            not self.STAGE_ML_MODEL_PATH
+            or not self.INPUT_SCALER_PATH
+            or not self.ERR_ML_MODEL_PATH
+        ):
+            raise Exception("Cannot found lunge files for prediction")
 
         try:
-            with open(self.ML_MODEL_PATH, "rb") as f:
-                self.model = pickle.load(f)
+            with open(self.ERR_ML_MODEL_PATH, "rb") as f:
+                self.err_model = pickle.load(f)
+
+            with open(self.STAGE_ML_MODEL_PATH, "rb") as f:
+                self.stage_model = pickle.load(f)
 
             with open(self.INPUT_SCALER_PATH, "rb") as f2:
                 self.input_scaler = pickle.load(f2)
@@ -245,33 +253,41 @@ class LungeDetection:
             X = pd.DataFrame(self.input_scaler.transform(X))
 
             # Make prediction and its probability
-            predicted_class = self.model.predict(X)[0]
-            prediction_probabilities = self.model.predict_proba(X)[0]
-            prediction_probability = round(
-                prediction_probabilities[prediction_probabilities.argmax()], 2
+            stage_predicted_class = self.stage_model.predict(X)[0]
+            stage_prediction_probabilities = self.stage_model.predict_proba(X)[0]
+            stage_prediction_probability = round(
+                stage_prediction_probabilities[stage_prediction_probabilities.argmax()],
+                2,
             )
 
             # Evaluate stage prediction for counter
             if (
-                predicted_class == "I"
-                and prediction_probability >= self.PREDICTION_PROB_THRESHOLD
+                stage_predicted_class == "I"
+                and stage_prediction_probability >= self.PREDICTION_PROB_THRESHOLD
             ):
                 self.current_stage = "init"
             elif (
-                predicted_class == "M"
-                and prediction_probability >= self.PREDICTION_PROB_THRESHOLD
+                stage_predicted_class == "M"
+                and stage_prediction_probability >= self.PREDICTION_PROB_THRESHOLD
             ):
                 self.current_stage = "mid"
             elif (
-                predicted_class == "D"
-                and prediction_probability >= self.PREDICTION_PROB_THRESHOLD
+                stage_predicted_class == "D"
+                and stage_prediction_probability >= self.PREDICTION_PROB_THRESHOLD
             ):
-                if self.current_stage == "mid":
+                if self.current_stage in ["init", "mid"]:
                     self.counter += 1
 
                 self.current_stage = "down"
 
+            # Check out errors from a rep to reduce repeated warning
+            errors_from_this_rep = map(
+                lambda el: el["stage"],
+                filter(lambda el: el["counter"] == self.counter, self.results),
+            )
+
             # Analyze lunge pose
+            # Knee angle
             analyzed_results = analyze_knee_angle(
                 mp_results=mp_results,
                 stage=self.current_stage,
@@ -279,11 +295,56 @@ class LungeDetection:
                 draw_to_image=(image, video_dimensions),
             )
 
+            # Knee over toe
+            k_o_t_error = None
+            err_predicted_class = None
+            err_prediction_probabilities = None
+            err_prediction_probability = None
+            if self.current_stage == "down":
+                err_predicted_class = self.err_model.predict(X)[0]
+                err_prediction_probabilities = self.err_model.predict_proba(X)[0]
+                err_prediction_probability = round(
+                    err_prediction_probabilities[err_prediction_probabilities.argmax()],
+                    2,
+                )
+
+                if (
+                    err_predicted_class == "L"
+                    and err_prediction_probability >= self.PREDICTION_PROB_THRESHOLD
+                ):
+                    k_o_t_error = "Incorrect"
+                    self.has_error = True
+
+                    # Limit save error frames saved in a rep
+                    if (
+                        len(self.results) == 0
+                        or "knee over toe" not in errors_from_this_rep
+                    ):
+                        self.results.append(
+                            {
+                                "stage": f"knee over toe",
+                                "frame": image,
+                                "timestamp": timestamp,
+                                "counter": self.counter,
+                            }
+                        )
+
+                elif (
+                    err_predicted_class == "C"
+                    and err_prediction_probability >= self.PREDICTION_PROB_THRESHOLD
+                ):
+                    k_o_t_error = "Correct"
+                    self.has_error = False
+            else:
+                self.has_error = False
+
             # Stage management for saving results
-            self.has_error = analyzed_results["error"]
+            self.has_error = (
+                analyzed_results["error"] if not self.has_error else self.has_error
+            )
             if analyzed_results["error"]:
-                # Limit the error frames saved in a rep
-                if len(self.results) == 0:
+                # Limit save error frames saved in a rep
+                if len(self.results) == 0 or "knee angle" not in errors_from_this_rep:
                     self.results.append(
                         {
                             "stage": f"knee angle",
@@ -292,17 +353,6 @@ class LungeDetection:
                             "counter": self.counter,
                         }
                     )
-                else:
-                    last_error_counter = self.results[-1]["counter"]
-                    if self.counter != last_error_counter:
-                        self.results.append(
-                            {
-                                "stage": f"knee angle",
-                                "frame": image,
-                                "timestamp": timestamp,
-                                "counter": self.counter,
-                            }
-                        )
 
             # Visualization
             # Draw landmarks and connections
@@ -322,7 +372,7 @@ class LungeDetection:
             # Status box
             cv2.rectangle(image, (0, 0), (500, 60), (245, 117, 16), -1)
 
-            # Display class
+            # Display Stage prediction for count
             cv2.putText(
                 image,
                 "COUNT",
@@ -335,8 +385,30 @@ class LungeDetection:
             )
             cv2.putText(
                 image,
-                f'{str(self.counter)}, {predicted_class.split(" ")[0]}, {str(prediction_probability)}',
+                f'{str(self.counter)}, {stage_predicted_class.split(" ")[0]}, {str(stage_prediction_probability)}',
                 (5, 40),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.7,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
+
+            # Display KNEE_OVER_TOE error prediction
+            cv2.putText(
+                image,
+                "KNEE_OVER_TOE",
+                (140, 12),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.5,
+                (0, 0, 0),
+                1,
+                cv2.LINE_AA,
+            )
+            cv2.putText(
+                image,
+                f"{err_predicted_class}, {err_prediction_probability}, {k_o_t_error}",
+                (135, 40),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.7,
                 (255, 255, 255),
