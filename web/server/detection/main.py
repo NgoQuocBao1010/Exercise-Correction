@@ -12,11 +12,11 @@ from .utils import rescale_frame
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
-# FIXME: Load machine learning model on init affect Django reload speed
 EXERCISE_DETECTIONS = None
 
 
 def load_machine_learning_models():
+    """Load Machine Learning Model"""
     global EXERCISE_DETECTIONS
 
     if EXERCISE_DETECTIONS is not None:
