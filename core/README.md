@@ -36,4 +36,4 @@ Work models for error detection:
 
 Work models for stage prediction:
 
-1. [SKlearn KNN model](./lunge_model/model/sklearn/stage_KNN_model.pkl)
+1. [SKlearn SVC model](./lunge_model/model/sklearn/stage_SVC_model.pkl)
