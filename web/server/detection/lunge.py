@@ -145,7 +145,7 @@ def analyze_knee_angle(
 
 
 class LungeDetection:
-    STAGE_ML_MODEL_PATH = get_static_file_url("model/stage_LR_model.pkl")
+    STAGE_ML_MODEL_PATH = get_static_file_url("model/lunge_stage_model.pkl")
     ERR_ML_MODEL_PATH = get_static_file_url("model/lunge_err_model.pkl")
     INPUT_SCALER_PATH = get_static_file_url("model/lunge_input_scaler.pkl")
 
