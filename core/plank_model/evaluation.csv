@@ -1,4 +1,4 @@
-Model,Precision Score,Accuracy Score,Recall Score,F1 Score,Confusion Matrix
+Model,Precision Score,Recall Score,Accuracy Score,F1 Score,Confusion Matrix
 LR,0.9958281333571047,0.995774647887324,0.995774647887324,0.9957806213166401,"[[234   0   0]
  [  1 240   0]
  [  2   0 233]]"
