@@ -16,7 +16,7 @@ EXERCISE_DETECTIONS = None
 
 
 def load_machine_learning_models():
-    """Load Machine Learning Model"""
+    """Load all machine learning models"""
     global EXERCISE_DETECTIONS
 
     if EXERCISE_DETECTIONS is not None:
@@ -36,17 +36,20 @@ def exercise_detection(
     video_name_to_save: str,
     exercise_type: str,
     rescale_percent: float = 40,
-):
-    """Process video for error detection
+) -> dict:
+    """Analyzed Exercise Video
 
-    Parameters
-    ------------
-        video_file_path: str
-            Path to the original video file
-        video_name_to_save: str
-            Name to save video on server
-        rescale_percent: float (optional)
-            How many percent to scale the each frame of the video for faster network transition
+    Args:
+        video_file_path (str): path to video
+        video_name_to_save (str): path to save analyzed video
+        exercise_type (str): exercise type
+        rescale_percent (float, optional): Percentage to scale back from the original video size. Defaults to 40.
+
+    Raises:
+        Exception: Not supported exercise type
+
+    Returns:
+        dict: Dictionary of analyzed stats from the video
     """
     exercise_detection = EXERCISE_DETECTIONS.get(exercise_type)
     if not exercise_detection:
