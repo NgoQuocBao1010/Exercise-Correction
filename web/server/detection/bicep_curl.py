@@ -48,7 +48,6 @@ class BicepPoseAnalysis:
 
         # Params for peak contraction error detection
         self.peak_contraction_angle = 1000
-        self.peak_contraction_frame = None
 
     def get_joints(self, landmarks) -> bool:
         """
@@ -117,6 +116,27 @@ class BicepPoseAnalysis:
         # * Evaluation for LOOSE UPPER ARM error
         if ground_upper_arm_angle > self.loose_upper_arm_angle_threshold:
             has_error = True
+            cv2.rectangle(frame, (350, 0), (600, 40), (245, 117, 16), -1)
+            cv2.putText(
+                frame,
+                "ARM ERROR",
+                (360, 12),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.5,
+                (0, 0, 0),
+                1,
+                cv2.LINE_AA,
+            )
+            cv2.putText(
+                frame,
+                "LOOSE UPPER ARM",
+                (355, 30),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.5,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
 
             # Limit the saved frame
             if not self.loose_upper_arm:
@@ -129,11 +149,9 @@ class BicepPoseAnalysis:
             self.loose_upper_arm = False
 
         # * Evaluate PEAK CONTRACTION error
-        # FIXME: Cannot detect PC error at current frame
         if self.stage == "up" and bicep_curl_angle < self.peak_contraction_angle:
             # Save peaked contraction every rep
             self.peak_contraction_angle = bicep_curl_angle
-            self.peak_contraction_frame = frame
 
         elif self.stage == "down":
             # * Evaluate if the peak is higher than the threshold if True, marked as an error then saved that frame
@@ -141,11 +159,33 @@ class BicepPoseAnalysis:
                 self.peak_contraction_angle != 1000
                 and self.peak_contraction_angle >= self.peak_contraction_threshold
             ):
+                cv2.rectangle(frame, (350, 0), (600, 40), (245, 117, 16), -1)
+                cv2.putText(
+                    frame,
+                    "ARM ERROR",
+                    (360, 12),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    0.5,
+                    (0, 0, 0),
+                    1,
+                    cv2.LINE_AA,
+                )
+                cv2.putText(
+                    frame,
+                    "WEAK PEAK CONTRACTION",
+                    (355, 30),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    0.5,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+
                 self.detected_errors["PEAK_CONTRACTION"] += 1
                 results.append(
                     {
                         "stage": "peak contraction",
-                        "frame": self.peak_contraction_frame,
+                        "frame": frame,
                         "timestamp": timestamp,
                     }
                 )
@@ -153,7 +193,6 @@ class BicepPoseAnalysis:
 
             # Reset params
             self.peak_contraction_angle = 1000
-            self.peak_contraction_frame = None
 
         return (bicep_curl_angle, ground_upper_arm_angle, has_error)
 
@@ -174,7 +213,6 @@ class BicepPoseAnalysis:
 
         # Params for peak contraction error detection
         self.peak_contraction_angle = 1000
-        self.peak_contraction_frame = None
 
 
 class BicepCurlDetection:
@@ -386,7 +424,7 @@ class BicepCurlDetection:
             )
 
             # Status box
-            cv2.rectangle(image, (0, 0), (500, 40), (245, 117, 16), -1)
+            cv2.rectangle(image, (0, 0), (350, 40), (245, 117, 16), -1)
 
             # Display probability
             cv2.putText(
@@ -436,11 +474,10 @@ class BicepCurlDetection:
                 cv2.LINE_AA,
             )
 
-            # * Display error
-            # Right arm error
+            # Lean back error
             cv2.putText(
                 image,
-                "R_PC",
+                "Lean-Too-Far-Back",
                 (165, 12),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
@@ -450,97 +487,13 @@ class BicepCurlDetection:
             )
             cv2.putText(
                 image,
-                str(self.right_arm_analysis.detected_errors["PEAK_CONTRACTION"]),
+                str("ERROR" if self.stand_posture == "L" else "CORRECT")
+                + f", {predicted_class}, {class_prediction_probability}",
                 (160, 30),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (255, 255, 255),
                 2,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                "R_LUA",
-                (225, 12),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (0, 0, 0),
-                1,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                str(self.right_arm_analysis.detected_errors["LOOSE_UPPER_ARM"]),
-                (220, 30),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-
-            # Left arm error
-            cv2.putText(
-                image,
-                "L_PC",
-                (300, 12),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (0, 0, 0),
-                1,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                str(self.left_arm_analysis.detected_errors["PEAK_CONTRACTION"]),
-                (295, 30),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                "L_LUA",
-                (380, 12),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (0, 0, 0),
-                1,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                str(self.left_arm_analysis.detected_errors["LOOSE_UPPER_ARM"]),
-                (375, 30),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (255, 255, 255),
-                2,
-                cv2.LINE_AA,
-            )
-
-            # Lean back error
-            cv2.putText(
-                image,
-                "LB",
-                (460, 12),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
-                (0, 0, 0),
-                1,
-                cv2.LINE_AA,
-            )
-            cv2.putText(
-                image,
-                str(self.stand_posture)
-                + f" ,{predicted_class}, {class_prediction_probability}",
-                (440, 30),
-                cv2.FONT_HERSHEY_COMPLEX,
-                0.3,
-                (255, 255, 255),
-                1,
                 cv2.LINE_AA,
             )
 
