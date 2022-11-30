@@ -116,6 +116,29 @@ def analyze_knee_angle(
     if draw_to_image is not None:
         (image, video_dimensions) = draw_to_image
 
+        if results["error"]:
+            cv2.rectangle(image, (425, 0), (600, 60), (245, 117, 16), -1)
+            cv2.putText(
+                image,
+                "KNEE ANGLE ERROR",
+                (430, 12),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.5,
+                (0, 0, 0),
+                1,
+                cv2.LINE_AA,
+            )
+            cv2.putText(
+                image,
+                "LEFT KNEE" if results["left"]["error"] else "RIGHT KNEE",
+                (425, 40),
+                cv2.FONT_HERSHEY_COMPLEX,
+                0.7,
+                (255, 255, 255),
+                2,
+                cv2.LINE_AA,
+            )
+
         right_color = (255, 255, 255) if not results["right"]["error"] else (0, 0, 255)
         left_color = (255, 255, 255) if not results["left"]["error"] else (0, 0, 255)
 
@@ -370,7 +393,7 @@ class LungeDetection:
             )
 
             # Status box
-            cv2.rectangle(image, (0, 0), (500, 60), (245, 117, 16), -1)
+            cv2.rectangle(image, (0, 0), (425, 60), (245, 117, 16), -1)
 
             # Display Stage prediction for count
             cv2.putText(
@@ -398,7 +421,7 @@ class LungeDetection:
             cv2.putText(
                 image,
                 "KNEE_OVER_TOE",
-                (140, 12),
+                (165, 12),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (0, 0, 0),
@@ -408,7 +431,7 @@ class LungeDetection:
             cv2.putText(
                 image,
                 f"{err_predicted_class}, {err_prediction_probability}, {k_o_t_error}",
-                (135, 40),
+                (155, 40),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.7,
                 (255, 255, 255),
