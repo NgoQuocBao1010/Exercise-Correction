@@ -1,4 +1,3 @@
-from tabnanny import verbose
 import mediapipe as mp
 import cv2
 import numpy as np
@@ -335,9 +334,13 @@ class BicepCurlDetection:
         self.right_arm_analysis.reset()
         self.left_arm_analysis.reset()
 
-    def detect(self, mp_results, image, timestamp) -> None:
-        """
-        Make Bicep Curl errors detection
+    def detect(self, mp_results, image, timestamp: int) -> None:
+        """Error detection
+
+        Args:
+            mp_results (): MediaPipe results
+            image (): OpenCV image
+            timestamp (int): Current time of the frame
         """
         self.has_error = False
 

@@ -1,8 +1,7 @@
-import cv2
+import cv2, pickle
 import mediapipe as mp
 import numpy as np
 import pandas as pd
-import pickle
 
 from .utils import (
     calculate_angle,
@@ -17,18 +16,17 @@ mp_pose = mp.solutions.pose
 
 def analyze_knee_angle(
     mp_results, stage: str, angle_thresholds: list, draw_to_image: tuple = None
-):
-    """
-    Calculate angle of each knee while performer at the DOWN position
+) -> dict:
+    """Calculate angle of each knee while performer at the DOWN position
 
-    Return result explanation:
-        error: True if at least 1 error
-        right
-            error: True if an error is on the right knee
-            angle: Right knee angle
-        left
-            error: True if an error is on the left knee
-            angle: Left knee angle
+    Args:
+        mp_results (): MediaPipe Pose results
+        stage (str): stage of the exercise
+        angle_thresholds (list): lower and upper limits for the knee angles
+        draw_to_image (tuple, optional): Contains an OpenCV frame and its dimension. Defaults to None.
+
+    Returns:
+        dict: Statistic from analyze knee angles
     """
     results = {
         "error": None,
