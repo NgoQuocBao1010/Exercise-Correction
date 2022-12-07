@@ -28,15 +28,20 @@ For some simple errors (for example, the feet placement error in squat), the det
 
 ### 2. Model Training for Error Detection
 
-1. Pick important landmarks
-   For each exercise, there will be different poses/body’s position, therefore it is essential to identify which parts (shoulder, hip, …) of a body are contribute to the exercise. The important landmarks identified for each exercise are utilized to extract body part’s position while exercising using MediaPipe.
-1. Data Processing
+#### 1. Pick important landmarks
+
+For each exercise, there will be different poses/body’s position, therefore it is essential to identify which parts (shoulder, hip, …) of a body are contribute to the exercise. The important landmarks identified for each exercise are utilized to extract body part’s position while exercising using MediaPipe.
+
+#### 2. Data Processing
+
  <p align="center"><img src="../images/data_processing.png" alt="Logo" width="70%" style="background-color:#f5f5f5"></p>
 
-1. Model training
-   There are 2 methods used in this thesis for model training. For each exercise, the models trained for each method will be compared and the best model will be chosen.
-    - Classification with Scikit-learn. (Decision Tree/Random Forest (RF), K-Nearest Neighbors (KNN), C-Support Vector (SVC), Logistic Regression classifier (LR) and Stochastic Gradient Descent classifier (SGDC))
-    - Building a Neural Network for classification with Keras.
+#### 3. Model training
+
+There are 2 methods used in this thesis for model training. For each exercise, the models trained for each method will be compared and the best model will be chosen.
+
+-   Classification with Scikit-learn. (Decision Tree/Random Forest (RF), K-Nearest Neighbors (KNN), C-Support Vector (SVC), Logistic Regression classifier (LR) and Stochastic Gradient Descent classifier (SGDC)).
+-   Building a Neural Network for classification with Keras.
 
 ### 3. Evaluation results of all models
 

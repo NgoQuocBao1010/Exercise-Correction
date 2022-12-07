@@ -3,6 +3,10 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
+    <a href="https://github.com/NgoQuocBao1010/Blood-Bank">
+        <img src="./images/logo.png" alt="Logo" width="300px">
+    </a>
+
   <h2 align="center">Exercise Pose Correction</h2>
 
   <p align="center">
@@ -157,20 +161,11 @@ Distributed under the MIT License.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-<!-- CONTACT -->
-
-## Contributors
-
-Ngô Hồng Quốc Bảo - [@NgoQuocBao](https://twitter.com/ngohquocbao1010)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 <!-- ACKNOWLEDGMENTS -->
 
 ## Acknowledgments
 
--   [Github - Pose Trainer](https://github.com/stevenzchen/pose-trainer)
--   [Github - Plank Pose Detection](https://github.com/Vollkorn01/Deep-Learning-Fitness-Exercise-Correction-Keras)
+-   Here are some other projects which I get inspired from: [Pose Trainer](https://github.com/stevenzchen/pose-trainer), [Deep Learning Fitness Exercise Correction Keras](https://github.com/Vollkorn01/Deep-Learning-Fitness-Exercise-Correction-Keras) and [Posture](https://github.com/twixupmysleeve/Posture).
 -   This awesome README template is from [Best README Template](https://github.com/othneildrew/Best-README-Template). ♥
 
 <p align="right">(<a href="#top">back to top</a>)</p>
