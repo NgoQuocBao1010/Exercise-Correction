@@ -3,10 +3,10 @@
 Brief overview about the methodology of building models for exercise pose detection.
 To go in depth on each exercise, click the link below:
 
--   [Bicep Curl](./bicep_model/4.evaluation.ipynb)
--   [Plank](./plank_model/4.evaluation.ipynb)
--   [Basic Squat](./squat_model/1.counter_model.ipynb)
--   [Lunge](./lunge_model/8.err.evaluation.ipynb)
+-   [Bicep Curl](./bicep_model/README.md)
+-   [Plank](./plank_model/README.md)
+-   [Basic Squat](./squat_model/README.md)
+-   [Lunge](./lunge_model/README.md)
 
 ### 1. Simple error detection
 

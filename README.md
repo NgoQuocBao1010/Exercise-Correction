@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-    <a href="https://github.com/NgoQuocBao1010/Blood-Bank">
+    <a href="https://github.com/NgoQuocBao1010/Exercise-Correction">
         <img src="./images/logo.png" alt="Logo" width="60%">
     </a>
 
@@ -23,16 +23,16 @@ This project goal is to develop 4 machine learning models for 4 of the most home
 Here are some detections of the exercises:
 
 -   Bicep Curl
-<P align="center"><img src="images/bicep_curl.gif" alt="Logo" width="70%"></p>
+<p align="center"><img src="images/bicep_curl.gif" alt="Logo" width="70%"></p>
 
 -   Basic Plank
-<P align="center"><img src="images/plank.gif" alt="Logo" width="70%"></p>
+<p align="center"><img src="images/plank.gif" alt="Logo" width="70%"></p>
 
 -   Basic Squat
-<P align="center"><img src="images/squat.gif" alt="Logo" width="70%"></p>
+<p align="center"><img src="images/squat.gif" alt="Logo" width="70%"></p>
 
 -   Lunge
-<P align="center"><img src="images/lunge.gif" alt="Logo" width="70%"></p>
+<p align="center"><img src="images/lunge.gif" alt="Logo" width="70%"></p>
 
 -   Models' evaluation results and website screenshots [here](#usage)
 
@@ -115,16 +115,16 @@ As the introduction indicated, there are 2 purposes for this project.
 
 1. Model training **(describe in depth [here](core/README.md))**. Below are the evaluation results for each models.
 
-    - [Bicep Curl](core/bicep_model/4.evaluation.ipynb) - _lean back error_: Confusion Matrix - ROC curve
+    - [Bicep Curl](core/bicep_model/README.md) - _lean back error_: Confusion Matrix - ROC curve
       | <img align="center" alt="Bicep Curl evaluation" src="images/bicep_curl_eval.png" /> | <img align="center" alt="NgoQuocBao's Top Languages" src="images/bicep_curl_eval_2.png" /> |
       | ------------- | ------------- |
-    - [Plank](core/plank_model/4.evaluation.ipynb) - _all errors_: Confusion Matrix - ROC curve
+    - [Plank](core/plank_model/README.md) - _all errors_: Confusion Matrix - ROC curve
       | <img align="center" alt="Plank evaluation" src="images/plank_eval.png" /> | <img align="center" alt="NgoQuocBao's Top Languages" src="images/plank_eval_2.png" /> |
       | ------------- | ------------- |
-    - [Basic Squat](core/squat_model/1.counter_model.ipynb) - _stage_: Confusion Matrix - ROC curve
+    - [Basic Squat](core/squat_model/README.md) - _stage_: Confusion Matrix - ROC curve
       | <img align="center" alt="Squat evaluation" src="images/squat_eval.png" /> | <img align="center" alt="NgoQuocBao's Top Languages" src="images/squat_eval_2.png" /> |
       | ------------- | ------------- |
-    - [Lunge](core/lunge_model/8.err.evaluation.ipynb) - _knee over toe error_: Confusion Matrix - ROC curve
+    - [Lunge](core/lunge_model/README.md) - _knee over toe error_: Confusion Matrix - ROC curve
       | <img align="center" alt="Lunge evaluation" src="images/lunge_eval.png" /> | <img align="center" alt="NgoQuocBao's Top Languages" src="images/lunge_eval_2.png" /> |
       | ------------- | ------------- |
 
@@ -166,6 +166,7 @@ Distributed under the MIT License.
 ## Acknowledgments
 
 -   Here are some other projects which I get inspired from: [Pose Trainer](https://github.com/stevenzchen/pose-trainer), [Deep Learning Fitness Exercise Correction Keras](https://github.com/Vollkorn01/Deep-Learning-Fitness-Exercise-Correction-Keras) and [Posture](https://github.com/twixupmysleeve/Posture).
+-   [Logo marker](https://www4.flamingtext.com/) for this project.
 -   This awesome README template is from [Best README Template](https://github.com/othneildrew/Best-README-Template). ♥
 
 <p align="right">(<a href="#top">back to top</a>)</p>
