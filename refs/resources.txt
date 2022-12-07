@@ -27,6 +27,7 @@ https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-cl
 
 # Github
 https://github.com/stevenzchen/pose-trainer
+https://github.com/Vollkorn01/Deep-Learning-Fitness-Exercise-Correction-Keras
 
 # Web
 https://xd.adobe.com/ideas/principles/emerging-technology/what-is-computer-vision-how-does-it-work/
