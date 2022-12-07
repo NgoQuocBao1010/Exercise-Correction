@@ -4,7 +4,7 @@
 <br />
 <div align="center">
     <a href="https://github.com/NgoQuocBao1010/Blood-Bank">
-        <img src="./images/logo.png" alt="Logo" width="300px">
+        <img src="./images/logo.png" alt="Logo" width="60%">
     </a>
 
   <h2 align="center">Exercise Pose Correction</h2>
