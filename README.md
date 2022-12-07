@@ -30,7 +30,7 @@ Here are some detections of the exercises:
 -   Lunge
 <P align="center"><img src="images/lunge.gif" alt="Logo" width="70%"></p>
 
--   Models' evaluation results and website screenshots here
+-   Models' evaluation results and website screenshots [here](#usage)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

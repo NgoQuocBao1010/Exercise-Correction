@@ -1,39 +1,53 @@
 <h2 align="center">Build Machine Learning Model</h2>
 
-### 1. Plank
+Brief overview about the methodology of building models for exercise pose detection.
+To go in depth on each exercise, click the link below:
 
-Work models:
+-   [Bicep Curl](./bicep_model/4.evaluation.ipynb)
+-   [Plank](./plank_model/4.evaluation.ipynb)
+-   [Basic Squat](./squat_model/1.counter_model.ipynb)
+-   [Lunge](./lunge_model/8.err.evaluation.ipynb)
 
-1. [Sklearn LR model](./plank_model/model/LR_model.pkl)
-1. [Sklearn RF model](./plank_model/model/RF_model.pkl)
-1. [Deep leaning model](./plank_model/model/plank_model_deep_learning.pkl)
+### 1. Simple error detection
 
-3 models work fine, but I'll choose the LR as it is easier to deploy for website.
+For some simple errors (for example, the feet placement error in squat), the detection method is either measuring the distance/angle between different joints during the exercise with the coordinate outputs from MediaPipe Pose.
 
-### 2. Bicep
+-   **_Distance Calculation_**
+    Assume there are 2 points with the following coordinates: Point 1 (x1,y1) and Point 2 (x2,y2), below is the formula to calculate the distance between 2 points.
 
-Work models:
+    ```
+    distance= √((x1-x2)^2 +(y1-y2) ^2 )
+    ```
 
-1. [Sklearn KNN model](./bicep_model/model/KNN_model.pkl)
-1. [Deep leaning model](./bicep_model/model/bicep_model_deep_learning.pkl)
+-   **_Angle Calculation_**
+    Assume there are 3 points with the following coordinates: Point 1 (x1,y1), Point 2 (x2,y2) and Point 3 (x3,y3), below is the formula to calculate the angle created by 3 points.
+    ```
+    angle_in_radian =arctan2⁡(y3-y2,x3-x2) -arctan2(y1-y2,x1-x2)
+    angle_in_degree=(angle_in_rad \* 180)/Π
+    ```
 
-As from the test results, the KNN model yield better predictions.
+### 2. Model Training for Error Detection
 
-### 3. Squat
+1. Pick important landmarks
+   For each exercise, there will be different poses/body’s position, therefore it is essential to identify which parts (shoulder, hip, …) of a body are contribute to the exercise. The important landmarks identified for each exercise are utilized to extract body part’s position while exercising using MediaPipe.
+1. Data Processing
+ <p align="center"><img src="../images/data_processing.png" alt="Logo" width="70%" style="background-color:#f5f5f5"></p>
 
-Work models:
+1. Model training
+   There are 2 methods used in this thesis for model training. For each exercise, the models trained for each method will be compared and the best model will be chosen.
+    - Classification with Scikit-learn. (Decision Tree/Random Forest (RF), K-Nearest Neighbors (KNN), C-Support Vector (SVC), Logistic Regression classifier (LR) and Stochastic Gradient Descent classifier (SGDC))
+    - Building a Neural Network for classification with Keras.
 
-1. [Sklearn KNN model](./squat_model/model/KNN_model.pkl)
+### 3. Evaluation results of all models
 
-As from the test results, the KNN model yield better predictions.
+1. Bicep Curl - _lean back error_
+ <p align="center"><img src="../images/bicep_curl_eval_3.png" alt="Logo" width="70%"></p>
 
-### 4. Lunge
+2. Plank - _all errors_
+ <p align="center"><img src="../images/plank_eval_3.png" alt="Logo" width="70%"></p>
 
-Work models for error detection:
+3. Basic Squat - _stage_
+ <p align="center"><img src="../images/squat_eval_3.png" alt="Logo" width="70%"></p>
 
-1. [Sklearn LR model](./lunge_model/model/sklearn/err_LR_model.pkl)
-1. [Deep leaning model](./lunge_model/model/dp/err_lunge_dp.pkl)
-
-Work models for stage prediction:
-
-1. [SKlearn SVC model](./lunge_model/model/sklearn/stage_SVC_model.pkl)
+4. Lunge - _knee over toe error_
+ <p align="center"><img src="../images/lunge_eval_3.png" alt="Logo" width="70%"></p>
