@@ -82,6 +82,8 @@ This is an example of how you may give instructions on setting up the project lo
 
 ### Installation
 
+_If you only want to try the website, look [here](./web/README.md)._
+
 1. Clone the repo and change directory to that folder
 
     ```sh
@@ -94,14 +96,8 @@ This is an example of how you may give instructions on setting up the project lo
     pip install -r requirements.txt
     ```
 
-1. Install dependencies for website **_(optional)_**
-
-    ```bash
-    npm run install:client
-    ```
-
-1. Folder **_core_** is the code for data processing and model training.
-1. Folder **_web_** is the code for website.
+1. Folder **_[core](./core/README.md)_** is the code for data processing and model training.
+1. Folder **_[web](./web/README.md)_** is the code for website.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

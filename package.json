@@ -4,12 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start-all:website": "npm run install:client && npm run build-deploy:client && npm run start:server",
-        "install:client": "cd ./web/client && npm i",
-        "dev:client": "cd ./web/client && npm run dev",
-        "build:client": "cd ./web/client && npm run build",
-        "build-deploy:client": "cd ./web/client && npm run build:deploy",
-        "start:server": "cd ./web/server && python manage.py runserver",
+        "start:website": "cd ./web && npm run start:website",
         "remove-static-from-web": "cd ./web/server && python manage.py runscript static_remover"
     },
     "repository": {
