@@ -4,9 +4,12 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "build:base": "vite build --base=/static",
+        "build:deploy": "npm run build && npm run move-build-to-server",
         "preview": "vite preview --port 4173",
-        "test:unit": "vitest --environment jsdom"
+        "test:unit": "vitest --environment jsdom",
+        "move:assets": "rsync -a --delete ./dist/static/* ../server/static/",
+        "move:index": "cp -fr ./dist/index.html ../server/templates/",
+        "move-build-to-server": "npm run move:assets && npm run move:index"
     },
     "dependencies": {
         "axios": "^1.1.2",

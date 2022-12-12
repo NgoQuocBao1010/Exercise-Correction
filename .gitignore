@@ -47,3 +47,5 @@ temp/
 github/
 web/*/static/media/
 web/*/static/images/
+web/*/static/assets/
+web/*/static/css/
