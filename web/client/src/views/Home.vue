@@ -2,7 +2,7 @@
 
 <template>
     <div class="container">
-        <RouterLink :to="{ name: 'Mediapipe' }" class="box">
+        <RouterLink to="#" class="box">
             <i class="fa-solid fa-video"></i>
             <p class="box__description">Real Time</p>
         </RouterLink>
