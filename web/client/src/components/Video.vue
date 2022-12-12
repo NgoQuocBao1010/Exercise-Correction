@@ -19,7 +19,10 @@ onMounted(() => {
 });
 
 const handleVideoLoad = () => {
-    videoContainer.value.scrollIntoView({ behavior: "smooth", block: "end" });
+    videoContainer.value.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+    });
 };
 </script>
 

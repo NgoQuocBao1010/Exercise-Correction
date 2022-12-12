@@ -139,7 +139,8 @@ const jumpToVideoLocation = (second) => {
 
 <style lang="scss" scoped>
 .result-section {
-    margin: 2rem 0;
+    margin-top: 2rem;
+    margin-bottom: 5rem;
 
     .tab-links {
         display: flex;
