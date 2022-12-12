@@ -101,31 +101,38 @@ const jumpToVideoLocation = (second) => {
             </template>
 
             <!-- Detail Content -->
-            <template v-if="selectedDisplay == 'detail'">
-                <div class="box-error" v-for="(error, index) in data.details">
-                    <p>
-                        {{ index + 1 }}. {{ error.stage }} at
-                        <span
-                            class="error-time"
-                            @click="jumpToVideoLocation(error.timestamp)"
-                        >
-                            {{ error.timestamp }} second
-                        </span>
-                    </p>
-                    <img :src="`${error.frame}`" />
-                    <hr />
-                </div>
-            </template>
+            <KeepAlive>
+                <template v-if="selectedDisplay == 'detail'">
+                    <div
+                        class="box-error"
+                        v-for="(error, index) in data.details"
+                    >
+                        <p>
+                            {{ index + 1 }}. {{ error.stage }} at
+                            <span
+                                class="error-time"
+                                @click="jumpToVideoLocation(error.timestamp)"
+                            >
+                                {{ error.timestamp }} second
+                            </span>
+                        </p>
+                        <img :src="`${error.frame}`" />
+                        <hr />
+                    </div>
+                </template>
+            </KeepAlive>
 
             <!-- Full Video content -->
-            <template v-if="selectedDisplay == 'video'">
-                <div class="video-container">
-                    <Video
-                        :video-name="data.file_name"
-                        :start-at="videoStart"
-                    ></Video>
-                </div>
-            </template>
+            <KeepAlive>
+                <template v-if="selectedDisplay == 'video'">
+                    <div class="video-container">
+                        <Video
+                            :video-name="data.file_name"
+                            :start-at="videoStart"
+                        ></Video>
+                    </div>
+                </template>
+            </KeepAlive>
         </div>
     </section>
 </template>
