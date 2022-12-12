@@ -133,7 +133,7 @@ class BicepPoseAnalysis:
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -176,7 +176,7 @@ class BicepPoseAnalysis:
                     cv2.FONT_HERSHEY_COMPLEX,
                     0.5,
                     (255, 255, 255),
-                    2,
+                    1,
                     cv2.LINE_AA,
                 )
 
@@ -449,7 +449,7 @@ class BicepCurlDetection:
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -473,7 +473,7 @@ class BicepCurlDetection:
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -496,7 +496,7 @@ class BicepCurlDetection:
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 

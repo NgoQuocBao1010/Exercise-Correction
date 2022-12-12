@@ -369,7 +369,7 @@ class SquatDetection:
             )
 
             # Status box
-            cv2.rectangle(image, (0, 0), (500, 60), (245, 117, 16), -1)
+            cv2.rectangle(image, (0, 0), (300, 40), (245, 117, 16), -1)
 
             # Display class
             cv2.putText(
@@ -377,7 +377,7 @@ class SquatDetection:
                 "COUNT",
                 (10, 12),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
+                0.3,
                 (0, 0, 0),
                 1,
                 cv2.LINE_AA,
@@ -385,11 +385,11 @@ class SquatDetection:
             cv2.putText(
                 image,
                 f'{str(self.counter)}, {predicted_class.split(" ")[0]}, {str(prediction_probability)}',
-                (5, 40),
+                (5, 25),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.7,
+                0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -397,9 +397,9 @@ class SquatDetection:
             cv2.putText(
                 image,
                 "FEET",
-                (200, 12),
+                (130, 12),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
+                0.3,
                 (0, 0, 0),
                 1,
                 cv2.LINE_AA,
@@ -407,11 +407,11 @@ class SquatDetection:
             cv2.putText(
                 image,
                 feet_placement,
-                (195, 40),
+                (125, 25),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.7,
+                0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -419,9 +419,9 @@ class SquatDetection:
             cv2.putText(
                 image,
                 "KNEE",
-                (330, 12),
+                (225, 12),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
+                0.3,
                 (0, 0, 0),
                 1,
                 cv2.LINE_AA,
@@ -429,11 +429,11 @@ class SquatDetection:
             cv2.putText(
                 image,
                 knee_placement,
-                (325, 40),
+                (220, 25),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.7,
+                0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 

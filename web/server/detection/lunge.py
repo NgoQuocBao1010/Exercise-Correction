@@ -115,13 +115,13 @@ def analyze_knee_angle(
         (image, video_dimensions) = draw_to_image
 
         if results["error"]:
-            cv2.rectangle(image, (425, 0), (600, 60), (245, 117, 16), -1)
+            cv2.rectangle(image, (0, 50), (120, 100), (245, 117, 16), -1)
             cv2.putText(
                 image,
                 "KNEE ANGLE ERROR",
-                (430, 12),
+                (10, 62),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.5,
+                0.3,
                 (0, 0, 0),
                 1,
                 cv2.LINE_AA,
@@ -129,11 +129,11 @@ def analyze_knee_angle(
             cv2.putText(
                 image,
                 "LEFT KNEE" if results["left"]["error"] else "RIGHT KNEE",
-                (425, 40),
+                (10, 82),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.7,
+                0.3,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -391,7 +391,7 @@ class LungeDetection:
             )
 
             # Status box
-            cv2.rectangle(image, (0, 0), (425, 60), (245, 117, 16), -1)
+            cv2.rectangle(image, (0, 0), (325, 40), (245, 117, 16), -1)
 
             # Display Stage prediction for count
             cv2.putText(
@@ -407,11 +407,11 @@ class LungeDetection:
             cv2.putText(
                 image,
                 f'{str(self.counter)}, {stage_predicted_class.split(" ")[0]}, {str(stage_prediction_probability)}',
-                (5, 40),
+                (5, 30),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.7,
+                0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
@@ -419,7 +419,7 @@ class LungeDetection:
             cv2.putText(
                 image,
                 "KNEE_OVER_TOE",
-                (165, 12),
+                (145, 12),
                 cv2.FONT_HERSHEY_COMPLEX,
                 0.5,
                 (0, 0, 0),
@@ -429,11 +429,11 @@ class LungeDetection:
             cv2.putText(
                 image,
                 f"{err_predicted_class}, {err_prediction_probability}, {k_o_t_error}",
-                (155, 40),
+                (135, 30),
                 cv2.FONT_HERSHEY_COMPLEX,
-                0.7,
+                0.5,
                 (255, 255, 255),
-                2,
+                1,
                 cv2.LINE_AA,
             )
 
