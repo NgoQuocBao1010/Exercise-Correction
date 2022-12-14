@@ -31,10 +31,11 @@ const handleVideoLoad = () => {
     <div class="player" ref="videoContainer">
         <video
             controls
-            muted
-            autoPlay
             ref="video"
             @loadeddata="handleVideoLoad"
+            autoplay
+            loop
+            muted
         >
             <source :src="`${url}`" type="video/mp4" />
         </video>
