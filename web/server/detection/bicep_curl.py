@@ -83,10 +83,25 @@ class BicepPoseAnalysis:
 
         return self.is_visible
 
-    def analyze_pose(self, landmarks, frame, results: list, timestamp: int):
-        """
-        - Bicep Counter
-        - Errors Detection
+    def analyze_pose(
+        self,
+        landmarks,
+        frame,
+        results,
+        timestamp: int,
+        lean_back_error: bool = False,
+    ):
+        """Analyze angles of an arm for error detection
+
+        Args:
+            landmarks (): MediaPipe Pose landmarks
+            frame (): OpenCV frame
+            results (): MediaPipe Pose results
+            timestamp (int): timestamp of the frame
+            lean_back_error (bool, optional): If there is an lean back error detected, ignore the analysis. Defaults to False.
+
+        Returns:
+            _type_: _description_
         """
         has_error = False
         self.get_joints(landmarks)
@@ -111,6 +126,10 @@ class BicepPoseAnalysis:
         ground_upper_arm_angle = int(
             calculate_angle(self.elbow, self.shoulder, shoulder_projection)
         )
+
+        # Stop analysis if lean back error is occur
+        if lean_back_error:
+            return (bicep_curl_angle, ground_upper_arm_angle, has_error)
 
         # * Evaluation for LOOSE UPPER ARM error
         if ground_upper_arm_angle > self.loose_upper_arm_angle_threshold:
@@ -221,7 +240,7 @@ class BicepCurlDetection:
     VISIBILITY_THRESHOLD = 0.65
 
     # Params for counter
-    STAGE_UP_THRESHOLD = 90
+    STAGE_UP_THRESHOLD = 100
     STAGE_DOWN_THRESHOLD = 120
 
     # Params to catch FULL RANGE OF MOTION error
@@ -334,7 +353,12 @@ class BicepCurlDetection:
         self.right_arm_analysis.reset()
         self.left_arm_analysis.reset()
 
-    def detect(self, mp_results, image, timestamp: int) -> None:
+    def detect(
+        self,
+        mp_results,
+        image,
+        timestamp: int,
+    ) -> None:
         """Error detection
 
         Args:
@@ -348,28 +372,7 @@ class BicepCurlDetection:
             video_dimensions = [image.shape[1], image.shape[0]]
             landmarks = mp_results.pose_landmarks.landmark
 
-            (
-                left_bicep_curl_angle,
-                left_ground_upper_arm_angle,
-                left_arm_error,
-            ) = self.left_arm_analysis.analyze_pose(
-                landmarks=landmarks,
-                frame=image,
-                results=self.results,
-                timestamp=timestamp,
-            )
-
-            (
-                right_bicep_curl_angle,
-                right_ground_upper_arm_angle,
-                right_arm_error,
-            ) = self.right_arm_analysis.analyze_pose(
-                landmarks=landmarks,
-                frame=image,
-                results=self.results,
-                timestamp=timestamp,
-            )
-
+            # * Model prediction for Lean-back error
             # Extract keypoints from frame for the input
             row = extract_important_keypoints(mp_results, self.important_landmarks)
             X = pd.DataFrame(
@@ -406,6 +409,33 @@ class BicepCurlDetection:
                 self.has_error = True
 
             self.previous_stand_posture = self.stand_posture
+
+            # * Arms analysis for errors
+            # Left arm
+            (
+                left_bicep_curl_angle,
+                left_ground_upper_arm_angle,
+                left_arm_error,
+            ) = self.left_arm_analysis.analyze_pose(
+                landmarks=landmarks,
+                frame=image,
+                results=self.results,
+                timestamp=timestamp,
+                lean_back_error=(self.stand_posture == "L"),
+            )
+
+            # Right arm
+            (
+                right_bicep_curl_angle,
+                right_ground_upper_arm_angle,
+                right_arm_error,
+            ) = self.right_arm_analysis.analyze_pose(
+                landmarks=landmarks,
+                frame=image,
+                results=self.results,
+                timestamp=timestamp,
+                lean_back_error=(self.stand_posture == "L"),
+            )
 
             self.has_error = (
                 True if (right_arm_error or left_arm_error) else self.has_error

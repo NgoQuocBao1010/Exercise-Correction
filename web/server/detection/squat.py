@@ -301,14 +301,17 @@ class SquatDetection:
                 feet_placement = "too wide"
 
             # * Evaluate KNEE PLACEMENT error
-            if knee_placement_evaluation == -1:
+            if feet_placement == "correct":
+                if knee_placement_evaluation == -1:
+                    knee_placement = "unknown"
+                elif knee_placement_evaluation == 0:
+                    knee_placement = "correct"
+                elif knee_placement_evaluation == 1:
+                    knee_placement = "too tight"
+                elif knee_placement_evaluation == 2:
+                    knee_placement = "too wide"
+            else:
                 knee_placement = "unknown"
-            elif knee_placement_evaluation == 0:
-                knee_placement = "correct"
-            elif knee_placement_evaluation == 1:
-                knee_placement = "too tight"
-            elif knee_placement_evaluation == 2:
-                knee_placement = "too wide"
 
             # Stage management for saving results
             # * Feet placement

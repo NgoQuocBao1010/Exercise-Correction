@@ -15,7 +15,11 @@ mp_pose = mp.solutions.pose
 
 
 def analyze_knee_angle(
-    mp_results, stage: str, angle_thresholds: list, draw_to_image: tuple = None
+    mp_results,
+    stage: str,
+    angle_thresholds: list,
+    knee_over_toe: bool = False,
+    draw_to_image: tuple = None,
 ) -> dict:
     """Calculate angle of each knee while performer at the DOWN position
 
@@ -23,6 +27,7 @@ def analyze_knee_angle(
         mp_results (): MediaPipe Pose results
         stage (str): stage of the exercise
         angle_thresholds (list): lower and upper limits for the knee angles
+        knee_over_toe (bool): if knee_over_toe error occur, ignore knee angles. Default to False
         draw_to_image (tuple, optional): Contains an OpenCV frame and its dimension. Defaults to None.
 
     Returns:
@@ -93,6 +98,10 @@ def analyze_knee_angle(
         )
 
     if stage != "down":
+        return results
+
+    # Ignore checking for knee angle error if knee_over_toe error occur
+    if knee_over_toe:
         return results
 
     # Evaluation
@@ -308,14 +317,6 @@ class LungeDetection:
             )
 
             # Analyze lunge pose
-            # Knee angle
-            analyzed_results = analyze_knee_angle(
-                mp_results=mp_results,
-                stage=self.current_stage,
-                angle_thresholds=self.KNEE_ANGLE_THRESHOLD,
-                draw_to_image=(image, video_dimensions),
-            )
-
             # Knee over toe
             k_o_t_error = None
             err_predicted_class = None
@@ -358,6 +359,16 @@ class LungeDetection:
                     self.has_error = False
             else:
                 self.has_error = False
+
+            # Analyze lunge pose
+            # * Knee angle
+            analyzed_results = analyze_knee_angle(
+                mp_results=mp_results,
+                stage=self.current_stage,
+                angle_thresholds=self.KNEE_ANGLE_THRESHOLD,
+                knee_over_toe=(k_o_t_error == "Incorrect"),
+                draw_to_image=(image, video_dimensions),
+            )
 
             # Stage management for saving results
             self.has_error = (
