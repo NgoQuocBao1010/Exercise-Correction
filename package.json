@@ -4,6 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "install:website": "cd ./web && npm run install:all",
+        "install:client": "cd ./web && npm run install:client",
         "start:website": "cd ./web && npm run start:website",
         "remove-static-from-web": "cd ./web/server && python manage.py runscript static_remover"
     },
