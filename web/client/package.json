@@ -4,18 +4,17 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "build:deploy": "npm run build && npm run move-build-to-server",
+        "build:deploy": "npm run set-base-url && npm run build && npm run move-build-to-server",
         "preview": "vite preview --port 4173",
         "test:unit": "vitest --environment jsdom",
         "move:assets": "rsync -a --delete ./dist/static/* ../server/static/",
         "move:index": "cp -fr ./dist/index.html ../server/templates/",
-        "move-build-to-server": "npm run move:assets && npm run move:index"
+        "move-build-to-server": "npm run move:assets && npm run move:index",
+        "set-base-url": "rm -f .env.local && echo \"VITE_BASE_URL=http://127.0.0.1\" >| .env.local"
     },
     "dependencies": {
         "axios": "^1.1.2",
         "pinia": "^2.0.21",
-        "primeicons": "^6.0.1",
-        "primevue": "^3.17.0",
         "sass": "^1.55.0",
         "vue": "^3.2.38",
         "vue-router": "^4.1.5"

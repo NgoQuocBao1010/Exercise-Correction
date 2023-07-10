@@ -142,5 +142,6 @@ def get_static_file_url(file_name: str) -> str:
     """
 
     path = f"{settings.STATICFILES_DIRS[0]}/{file_name}"
+    print(path)
 
     return path if os.path.exists(path) else None

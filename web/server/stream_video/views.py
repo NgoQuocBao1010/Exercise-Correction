@@ -32,7 +32,7 @@ def stream_video(request):
     static_url = get_static_file_url(f"media/{video_name}")
     if not static_url:
         return JsonResponse(
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_404_NOT_FOUND,
             data={
                 "message": "File not found",
             },

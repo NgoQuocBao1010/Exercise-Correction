@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 
+const apiUrl = import.meta.env.VITE_BASE_URL;
+
 const { videoName, startAt } = defineProps({
     videoName: String,
     startAt: {
@@ -8,8 +10,10 @@ const { videoName, startAt } = defineProps({
         type: Number,
     },
 });
+
 const url = computed(
-    () => `http://127.0.0.1:8000/api/video/stream?video_name=${videoName}`
+    () => `${apiUrl}/api/video/stream?video_name=${videoName}`
+    // () => `http://baobao.com`
 );
 
 const video = ref(null);
@@ -28,6 +32,7 @@ const handleVideoLoad = () => {
 
 <template>
     <!-- Video Player -->
+    <p>{{ url }}</p>
     <div class="player" ref="videoContainer">
         <video
             controls

@@ -49,9 +49,8 @@ def pose_detection(
     fps = int(cap.get(cv2.CAP_PROP_FPS))
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(
-        f"{settings.MEDIA_ROOT}/{video_name_to_save}", fourcc, fps, size
-    )
+    save_to_path = f"{settings.MEDIA_ROOT}/{video_name_to_save}"
+    out = cv2.VideoWriter(save_to_path, fourcc, fps, size)
 
     print("PROCESSING VIDEO ...")
     with mp_pose.Pose(
@@ -89,7 +88,7 @@ def pose_detection(
 
             out.write(image)
 
-    print("PROCESSED ...")
+    print(f"PROCESSED, save to {save_to_path}.")
     return
 
 
@@ -125,9 +124,8 @@ def exercise_detection(
     frame_count = 0
 
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
-    out = cv2.VideoWriter(
-        f"{settings.MEDIA_ROOT}/{video_name_to_save}", fourcc, fps, size
-    )
+    saved_path = f"{settings.MEDIA_ROOT}/{video_name_to_save}"
+    out = cv2.VideoWriter(saved_path, fourcc, fps, size)
 
     print("PROCESSING VIDEO ...")
     with mp_pose.Pose(
@@ -162,7 +160,7 @@ def exercise_detection(
 
             out.write(image)
 
-    print("PROCESSED ...")
+    print(f"PROCESSED. Save path: {saved_path}")
 
     processed_results = exercise_detection.handle_detected_results(
         video_name=video_name_to_save

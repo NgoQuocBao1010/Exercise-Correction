@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 
 import Dropzone from "../components/Dropzone.vue";
 import DropzoneLoading from "../components/DropzoneLoading.vue";
 import Result from "../components/Result.vue";
+
+const apiUrl = import.meta.env.VITE_BASE_URL || "http://127.0.0.1:8000";
 
 const EXERCISES = ["squat", "plank", "bicep_curl", "lunge"];
 
@@ -30,7 +32,7 @@ const uploadToServer = async () => {
     try {
         isProcessing.value = true;
         const { data } = await axios.post(
-            `http://127.0.0.1:8000/api/video/upload?type=${submitData.value.exerciseType}`,
+            `${apiUrl}/api/video/upload?type=${submitData.value.exerciseType}`,
             { file: submitData.value.videoFile },
             {
                 headers: {
@@ -39,9 +41,8 @@ const uploadToServer = async () => {
             }
         );
         processedData.value = data;
-        console.log(data);
     } catch (e) {
-        console.log("Error: ", e);
+        console.error("Error: ", e);
     } finally {
         isProcessing.value = false;
     }
